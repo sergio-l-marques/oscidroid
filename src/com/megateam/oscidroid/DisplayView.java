@@ -145,17 +145,21 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 	 }
 	 
 	 public void newChannel(int chNum) {
-		 for (int i=0;i<this.pointsPerChannel;i++) {
-			 chPoints[chNum][i]=0;
+		 if (!channelOn[chNum]) {
+			 for (int i=0;i<this.pointsPerChannel;i++) {
+				 chPoints[chNum][i]=0;
+			 }
+			 channelYoffset[chNum]=256/2;///0/*surfaceHeight/2*/;
+			 channelOn[chNum]=true;
+			 numChannels++;
 		 }
-		 channelYoffset[chNum]=256/2;///0/*surfaceHeight/2*/;
-		 channelOn[chNum]=true;
-		 numChannels++;
 	 }
 
 	 public void delChannel(int chNum) {
-		 numChannels--;
-		 channelOn[chNum]=false;
+		 if (channelOn[chNum]) {
+			 numChannels--;
+			 channelOn[chNum]=false;
+		 }
 	 }
 
 	 public void setChannelYoffset(int chNum, byte offset) {

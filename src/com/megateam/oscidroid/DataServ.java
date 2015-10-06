@@ -71,8 +71,6 @@ public class DataServ extends Service {
                           .show();
                   if (msg.obj!=null) {
                 	dpv=(DisplayView) msg.obj;
-                  //if (msg.arg2==69) {
-                	//dpv=MainActivity.displayView;
                   	createDataThread(dpv);
                   }
                   break;
