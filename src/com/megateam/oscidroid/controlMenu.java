@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
 import android.widget.TextView;
@@ -205,6 +206,29 @@ public class controlMenu extends FragmentActivity {
     	
 		btnHello = (Button) findViewById(R.id.hello);
     	btnHello.setOnClickListener(onClickListenerCB);
+    	
+    	
+        ((SeekBar)(findViewById(R.id.windowSeekBar))).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+			}
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				if(fromUser){
+					/*if(sUsbController != null){
+						sUsbController.send((byte)(progress&0xFF));
+					}*/
+					Log.i("RTG",String.format("ctrlMenu Client : onProgressChanged progress-->%d", progress));
+				}
+			}
+		});
+    	
+    	
 
 	}
 	
