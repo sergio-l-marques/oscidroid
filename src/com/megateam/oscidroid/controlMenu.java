@@ -32,7 +32,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TabWidget;
 import android.widget.ToggleButton;
 import android.util.Log;
-import android.view.View.OnApplyWindowInsetsListener;
+//import android.view.View.OnApplyWindowInsetsListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLayoutChangeListener;
@@ -42,7 +42,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver.OnDrawListener;
-import android.view.WindowInsets;
+//import android.view.WindowInsets;
 
 public class controlMenu extends FragmentActivity {
 
