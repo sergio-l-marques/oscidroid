@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TabHost;
 import android.widget.TabHost.TabContentFactory;
 import android.widget.TextView;
@@ -32,7 +33,7 @@ import android.widget.TabHost.TabSpec;
 import android.widget.TabWidget;
 import android.widget.ToggleButton;
 import android.util.Log;
-import android.view.View.OnApplyWindowInsetsListener;
+//import android.view.View.OnApplyWindowInsetsListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnLayoutChangeListener;
@@ -42,7 +43,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewTreeObserver.OnDrawListener;
-import android.view.WindowInsets;
+//import android.view.WindowInsets;
 
 public class controlMenu extends FragmentActivity {
 
@@ -205,6 +206,30 @@ public class controlMenu extends FragmentActivity {
     	
 		btnHello = (Button) findViewById(R.id.hello);
     	btnHello.setOnClickListener(onClickListenerCB);
+    	
+    	ToggleButton toggleButtonCh = (ToggleButton) findViewById(R.id.windowButton);
+    	toggleButtonCh.setOnClickListener(onClickListenerCB);
+    	
+        ((SeekBar)(findViewById(R.id.windowSeekBar))).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
+			}
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
+			}
+			
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress,
+					boolean fromUser) {
+				if(fromUser){
+					Log.i("RTG",String.format("ctrlMenu Client : onProgressChanged progress-->%d", progress));
+					setWindowPreviewSize(progress+1);
+					drawDisplay();
+				}
+			}
+		});
+    	
+    	
 
 	}
 	
@@ -288,6 +313,10 @@ public class controlMenu extends FragmentActivity {
 				break;
 			case R.id.stopstart:
 				stopStart();
+				break;
+			case R.id.windowButton:
+					enableWindowPreview(((ToggleButton)v).isChecked());
+					drawDisplay();
 				break;
 			default:
 				Log.i("RTG", String.format("ctrlMenu: id %d %d", id, numChannels));
@@ -619,4 +648,36 @@ public class controlMenu extends FragmentActivity {
         }
     }
 
+    public void enableWindowPreview(boolean enable) {
+    	int enableInt;
+    	
+    	if (enable) enableInt=1;
+    	else enableInt=0;
+    	
+        Message msg = Message.obtain(null, DataServ.MSG_ENABLE_WINDOW_PREVIEW, enableInt, 0);
+        try {
+            mServiceMessenger.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    public void setWindowPreviewSize(int size) {
+    	
+        Message msg = Message.obtain(null, DataServ.MSG_SET_WINDOW_PREVIEW_SIZE, size, 0);
+        try {
+            mServiceMessenger.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    public void drawDisplay() {
+    	
+        Message msg = Message.obtain(null, DataServ.MSG_DRAW_DISPLAY, 0, 0);
+        try {
+            mServiceMessenger.send(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 }

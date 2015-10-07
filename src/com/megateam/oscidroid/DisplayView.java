@@ -40,8 +40,8 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
     private float xFactor, yFactor;
     private boolean[] channelOn;
     
-    private boolean previewWindow=true;
-    private int numDisplayPerPreviewWindow=4;
+    private boolean previewWindow=false;
+    private int numDisplayPerPreviewWindow=1;
     private int xOffset=0;
     
     private Messenger mServiceMessenger;
@@ -169,9 +169,6 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 	 public void setChannelPersistence(boolean presistFlag) {
 	 }
 
-	 public void enablePreviewWindow(boolean enable) {
-		 this.previewWindow=enable;
-	 }
 	 public void setDisplayXOffset(float offset) {
 		 
 		 if (offset/xFactor>this.pointsPerChannel-(this.pointsPerChannel/numDisplayPerPreviewWindow))
@@ -180,12 +177,24 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 			 this.xOffset=0;
 		 else 
 			 this.xOffset=(int) (offset/xFactor);//(offset*xFactor);
-		 
-		 
+
 		 Log.i("RTG", String.format(String.format("displaView: setDisplayXOffset %d", this.xOffset)));
-		 //this.postInvalidate();
 	 }
 
+	 public void enableWindowPreview(boolean enable) {
+		 previewWindow=enable;
+	 }
+
+	 public void setWindowPreviewSize(int size) {
+
+		 
+		 if (this.xOffset+this.pointsPerChannel/size>=this.pointsPerChannel) {
+			 this.xOffset=(this.pointsPerChannel-(this.pointsPerChannel/size))-1;
+		 } 
+
+		 numDisplayPerPreviewWindow=size;
+	 }
+	 
 	 public void setPoints(int chNum, byte[] point) {
 		 for (int i=0;i<point.length;i++) {
 			 //Log.i("RTG", String.format(String.format("displaView: setPoints %f", (float)point[i])));
@@ -241,7 +250,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 				 if (channelPath[i].isEmpty()==false) channelPath[i].rewind();
 	              
 				 channelPath[i].moveTo(0, (chPoints[i][this.xOffset]+channelYoffset[i])*yFactorAux+yOffset);
-				 for (int j=this.xOffset+1;j<this.xOffset+256;j++) {
+				 for (int j=this.xOffset+1;j<this.xOffset+(pointsPerChannel/numDisplayPerPreviewWindow);j++) {
 					 channelPath[i].lineTo((j-this.xOffset)*xFactorAux, (chPoints[i][j]+channelYoffset[i])*yFactorAux+yOffset);
 				 }
 

@@ -26,33 +26,63 @@
     	            android:id="@+id/tab_settings"
         	       	android:layout_width="match_parent"
             	   	android:layout_height="match_parent"
-               		android:weightSum="5"  
-               		android:orientation="vertical">
+               		android:weightSum="3"  
+               		android:orientation="horizontal">
                	
-	           	    <TextView
-						android:id="@+id/txtView"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_marginTop="5sp"
-						android:text="Hello!" />
-				
-					<Button
-						android:id="@+id/stopstart"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="right"
-						android:text="startStop" />
-					<Button
-						android:id="@+id/hello"
-						android:layout_width="wrap_content"
-						android:layout_height="wrap_content"
-						android:layout_gravity="center"
-						android:text="hello" />
 				    <LinearLayout
-				        android:id="@+id/channel"
-				        android:layout_width="wrap_content"
-				        android:layout_height="wrap_content"
-			    	    android:orientation="vertical">
+                   		android:weightSum="2"  
+                   		android:layout_weight="1"  
+	        	       	android:layout_width="0dp"
+    	        	   	android:layout_height="match_parent"
+	               		android:orientation="vertical">
+	  					<Button
+							android:id="@+id/stopstart"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="right"
+							android:text="startStop" />
+						<Button
+							android:id="@+id/hello"
+							android:layout_width="wrap_content"
+							android:layout_height="wrap_content"
+							android:layout_gravity="center"
+							android:text="hello" />
+				    </LinearLayout>
+
+	           		<LinearLayout
+                   		android:weightSum="4"  
+                   		android:layout_weight="1"  
+	        	       	android:layout_width="0dp"
+    	        	   	android:layout_height="match_parent"
+	               		android:orientation="vertical">
+		           		<LinearLayout
+                   		android:layout_weight="2"  
+	        	       	android:layout_width="match_parent"
+    	        	   	android:layout_height="0dp"
+	               		android:orientation="horizontal">
+	               		</LinearLayout>
+	           		    <ToggleButton
+							android:id="@+id/windowButton"
+					        android:layout_below="@+id/text6"
+				        	android:layout_width="match_parent"
+					        android:layout_height="wrap_content"
+							android:text="window"
+					        android:gravity="center"/>
+					    <SeekBar
+				    	    android:id="@+id/windowSeekBar"
+				        	android:layout_width="match_parent"
+					        android:layout_height="wrap_content"
+							android:layout_gravity="center"
+					        android:max="31"
+					        android:progress="0"/>
+				    </LinearLayout>
+					    										
+				    <LinearLayout
+                   		android:layout_weight="1"  
+	        	       	android:layout_width="0dp"
+    	        	   	android:layout_height="match_parent"
+	               		android:orientation="vertical"
+				        android:id="@+id/channel">
 				    </LinearLayout>
 				</LinearLayout>
        	    	
