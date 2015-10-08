@@ -87,10 +87,10 @@ public class controlMenu extends FragmentActivity {
                         .show();
                 break;
             case DataServ.MSG_NUM_CHANNELS:
-            	numChannels=msg.arg1;
-            	Log.i("RTG",String.format("ctrlMenu Client : Service said %d Channels %X!", numChannels, msg.arg2));
+            	numChannels=msg.getData().getInt("numChannels");
+            	Log.i("RTG",String.format("ctrlMenu Client : Service said %d Channels %X!", numChannels,msg.getData().getInt("maskChannels")));
             	
-            	handler2UI.post(new createChannelToggleBtnAndTabs(msg.arg1, msg.arg2));
+            	handler2UI.post(new createChannelToggleBtnAndTabs(msg.getData().getInt("numChannels"), msg.getData().getInt("maskChannels"), msg.getData().getInt("windowSize")));
                 break;
             default:
                 super.handleMessage(msg);
@@ -150,6 +150,7 @@ public class controlMenu extends FragmentActivity {
 	private LinearLayout channelLL;
     private TabHost host;
 	private Button btnStartStop, btnHello;
+	private SeekBar seekBar;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -207,10 +208,13 @@ public class controlMenu extends FragmentActivity {
 		btnHello = (Button) findViewById(R.id.hello);
     	btnHello.setOnClickListener(onClickListenerCB);
     	
-    	ToggleButton toggleButtonCh = (ToggleButton) findViewById(R.id.windowButton);
-    	toggleButtonCh.setOnClickListener(onClickListenerCB);
+    	//ToggleButton toggleButtonCh = (ToggleButton) findViewById(R.id.windowButton);
+    	//toggleButtonCh.setOnClickListener(onClickListenerCB);
     	
-        ((SeekBar)(findViewById(R.id.windowSeekBar))).setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+    	seekBar=(SeekBar)(findViewById(R.id.windowSeekBar));
+    	seekBar.setMax(MainActivity.numPointsPerChan-1);
+    	seekBar.setProgress(MainActivity.numPointsPerChan-1);
+    	seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
 			public void onStopTrackingTouch(SeekBar seekBar) {
 			}
@@ -219,8 +223,7 @@ public class controlMenu extends FragmentActivity {
 			}
 			
 			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress,
-					boolean fromUser) {
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 				if(fromUser){
 					Log.i("RTG",String.format("ctrlMenu Client : onProgressChanged progress-->%d", progress));
 					setWindowPreviewSize(progress+1);
@@ -408,16 +411,20 @@ public class controlMenu extends FragmentActivity {
 	}
 	
     class createChannelToggleBtnAndTabs implements Runnable { 
-        private int numChannels, enableChannelsMask; 
+        private int numChannels, enableChannelsMask, windowPreviewSize; 
         
-        public createChannelToggleBtnAndTabs(int numChannels, int enableChannelsMask) { 
+        public createChannelToggleBtnAndTabs(int numChannels, int enableChannelsMask, int windowPreviewSize) { 
             this.numChannels = numChannels;
             this.enableChannelsMask=enableChannelsMask;
+            this.windowPreviewSize=windowPreviewSize;
         } 
         @Override 
         public void run() { 
 
-        	Log.i("RTG", String.format("ctrlMenu: numChannels %d enableChannelsMask %X", numChannels, enableChannelsMask));
+        	Log.i("RTG", String.format("ctrlMenu: numChannels %d enableChannelsMask %X windowPreviewSize %d", numChannels, enableChannelsMask, windowPreviewSize));
+        	
+        	seekBar.setProgress(windowPreviewSize);
+        	
     		channelLL = (LinearLayout) findViewById(R.id.channel);
     		
     		for (int i=0;i<numChannels;i++) {

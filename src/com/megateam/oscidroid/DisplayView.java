@@ -41,7 +41,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
     private boolean[] channelOn;
     
     private boolean previewWindow=false;
-    private int numDisplayPerPreviewWindow=1;
+    private int previewWindowSize;
     private int xOffset=0;
     
     private Messenger mServiceMessenger;
@@ -51,6 +51,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
           
     	this.mServiceMessenger=mServiceMessenger;
     	
+    	this.previewWindowSize=MainActivity.numPointsPerChan;
     	//OsciApp osciAppContext=((OsciApp) context);
     	
     	Log.i("RTG", String.format(String.format("DisplayView 1")));
@@ -171,8 +172,8 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 
 	 public void setDisplayXOffset(float offset) {
 		 
-		 if (offset/xFactor>this.pointsPerChannel-(this.pointsPerChannel/numDisplayPerPreviewWindow))
-			 this.xOffset=this.pointsPerChannel-(this.pointsPerChannel/numDisplayPerPreviewWindow);
+		 if (offset/xFactor>this.pointsPerChannel-(previewWindowSize))
+			 this.xOffset=this.pointsPerChannel-(previewWindowSize);
 		 else if (offset/xFactor<0/*(this.pointsPerChannel/numDisplayPerPreviewWindow)*/)
 			 this.xOffset=0;
 		 else 
@@ -188,11 +189,24 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 	 public void setWindowPreviewSize(int size) {
 
 		 
-		 if (this.xOffset+this.pointsPerChannel/size>=this.pointsPerChannel) {
-			 this.xOffset=(this.pointsPerChannel-(this.pointsPerChannel/size))-1;
-		 } 
+		 Log.i("RTG", String.format(String.format("displaView: setWindowPreviewSize xOffset %d size %d", this.xOffset, size)));
 
-		 numDisplayPerPreviewWindow=size;
+		 if (this.xOffset+size>=this.pointsPerChannel) {
+			 this.xOffset=(this.pointsPerChannel-size);
+		 } 
+		 Log.i("RTG", String.format(String.format("displaView: setWindowPreviewSize xOffset %d", this.xOffset)));
+
+		 previewWindowSize=size;
+
+		 if (size==this.pointsPerChannel) {
+			 previewWindow=false;
+		 } else {
+			 previewWindow=true;
+		 }
+	 }
+	 
+	 public int getWindowPreviewSize() {
+		 return previewWindowSize;
 	 }
 	 
 	 public void setPoints(int chNum, byte[] point) {
@@ -217,7 +231,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 			 for (int i=0;i<channelOn.length;i++) {
 				 
 				 if (numChannels>0) {
-					 canvas.drawRect(this.xOffset*xFactor, 0, this.xOffset*xFactor+(pointsPerChannel/numDisplayPerPreviewWindow)*xFactor, surfaceHeight*1/3, channelPaint);
+					 canvas.drawRect(this.xOffset*xFactor, 0, this.xOffset*xFactor+previewWindowSize*xFactor, surfaceHeight*1/3, channelPaint);
 				 }
 				 
 				 if (channelOn[i]==true) {
@@ -241,7 +255,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 			 yOffset=0;
 		 }
 
-		 xFactorAux=xFactor*numDisplayPerPreviewWindow;
+		 xFactorAux=xFactor*((float)this.pointsPerChannel/(float)previewWindowSize);
 		 
 		 for (int i=0;i<channelOn.length;i++) {
  
@@ -250,7 +264,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 				 if (channelPath[i].isEmpty()==false) channelPath[i].rewind();
 	              
 				 channelPath[i].moveTo(0, (chPoints[i][this.xOffset]+channelYoffset[i])*yFactorAux+yOffset);
-				 for (int j=this.xOffset+1;j<this.xOffset+(pointsPerChannel/numDisplayPerPreviewWindow);j++) {
+				 for (int j=this.xOffset+1;j<this.xOffset+previewWindowSize;j++) {
 					 channelPath[i].lineTo((j-this.xOffset)*xFactorAux, (chPoints[i][j]+channelYoffset[i])*yFactorAux+yOffset);
 				 }
 

@@ -5,6 +5,7 @@ package com.megateam.oscidroid;
 
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -53,8 +54,13 @@ public class DataServ extends Service {
               		Messenger mess = msg.replyTo; //retrieves messenger from the message
               		Message m = new Message();
               		m.what=MSG_NUM_CHANNELS;
-              		m.arg1=4;
-              		m.arg2=getEnabledChannelsMaskDataThread();
+              		
+              		Bundle b = new Bundle();
+              		//t("numChannels"), msg.getData().getInt("maskChannels"), msg.getData().getInt("windowSize")
+                    b.putInt("numChannels", 4);
+                    b.putInt("maskChannels", getEnabledChannelsMaskDataThread());
+                    b.putInt("windowSize", getWindowPreviewSizeDataThread());
+                    m.setData(b);
               		try {
 							mess.send(m);
 						} catch (RemoteException e) {
@@ -221,6 +227,9 @@ public class DataServ extends Service {
 	}
 	int getEnabledChannelsMaskDataThread() {
 		return dataThread.getEnabledChannelsMask();
+	}
+	int getWindowPreviewSizeDataThread() {
+		return dataThread.getWindowPreviewSize();
 	}
 	void setAttenuation2Thread(int channel, int attenuation) {
 		dataThread.setAttenuation(channel, attenuation);

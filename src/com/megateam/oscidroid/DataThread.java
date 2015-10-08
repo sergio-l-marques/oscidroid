@@ -92,6 +92,9 @@ public class DataThread extends Thread {
 	void setWindowPreviewSize(int size) {
 		dpv.setWindowPreviewSize(size);
 	}
+	int getWindowPreviewSize() {
+		return dpv.getWindowPreviewSize();
+	}
 	
 	//public void startThread(DisplayView dpv) {
 	//	Log.i("RTG", String.format(String.format("startThread"))); //Log Message
