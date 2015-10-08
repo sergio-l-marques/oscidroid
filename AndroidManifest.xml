@@ -35,6 +35,5 @@
                 </action>
             </intent-filter>
         </service>
-	</application>
-
+    </application>
 </manifest>

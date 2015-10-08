@@ -233,9 +233,7 @@ public class MainActivity extends Activity {
     	            float viewX = screenX - v.getLeft();
     	            float viewY = screenY - v.getTop();
     					
-    	            Intent intent;
-    	                
-    				Log.i("RTG", String.format("onTouch %f %f %f %f %d", screenX, screenY, viewX, viewY, v.getHeight())); //Log Message
+    	            Log.i("RTG", String.format("onTouch %f %f %f %f %d", screenX, screenY, viewX, viewY, v.getHeight())); //Log Message
     				
     				switch (event.getAction()) {
     				case MotionEvent.ACTION_DOWN:

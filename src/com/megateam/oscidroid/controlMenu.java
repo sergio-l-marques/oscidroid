@@ -176,24 +176,17 @@ public class controlMenu extends FragmentActivity {
     	host = (TabHost)findViewById(R.id.tab_host);
 		host.setup();
 
-		//TabWidget tabWidget = host.getTabWidget();
-        //
-		//for(int i=0; i<tabWidget.getChildCount(); i++){
-		//    View v = tabWidget.getChildAt(i);
-        //
-		//    // Look for the title view to ensure this is an indicator and not a divider.
-		//    TextView tv = (TextView)v.findViewById(android.R.id.title);
-		//    if(tv == null) {
-		//        continue;
-		//    }
-		//    v.setBackgroundResource(R.drawable.your_tab_selector_drawable);
-		//}
+		host.setOnTabChangedListener(new OnTabChangeListener() {
+	        public void onTabChanged(String arg0) {
+	        	setTabBackgroundColor(host);
+	        }
+	    });
 		
 		TabSpec spec = host.newTabSpec("settings");
 		spec.setContent(R.id.tab_settings);
 		spec.setIndicator("settings");
 		host.addTab(spec);
-
+		
 		spec = host.newTabSpec("trigger");
 		spec.setContent(R.id.tab_trigger);
 		spec.setIndicator("trigger");
@@ -201,6 +194,8 @@ public class controlMenu extends FragmentActivity {
 
  		//set Windows tab as default (zero based)
 		host.setCurrentTab(0);
+
+		setTabBackgroundColor(host);
 		
 		btnStartStop = (Button) findViewById(R.id.stopstart);
     	btnStartStop.setOnClickListener(onClickListenerCB);
@@ -234,6 +229,18 @@ public class controlMenu extends FragmentActivity {
     	
     	
 
+	}
+	
+	private void setTabBackgroundColor(TabHost host) {
+
+		for (int k = 0; k < host.getTabWidget().getChildCount(); k++) {
+			//host.getTabWidget().getChildAt(k).setBackgroundResource(R.drawable.tab_bg);
+            host.getTabWidget().getChildAt(k).setBackgroundColor(Color.TRANSPARENT); // unselected
+            host.getTabWidget().getChildTabViewAt(k).setSelected(false);
+        }
+
+        host.getTabWidget().getChildAt(host.getCurrentTab()).setBackgroundColor(Color.TRANSPARENT); // selected
+        host.getTabWidget().getChildTabViewAt(host.getCurrentTab()).setSelected(true);
 	}
 	
 	boolean mOngoing=false;
@@ -560,10 +567,10 @@ public class controlMenu extends FragmentActivity {
 					
 					host.getTabWidget().getChildTabViewAt(i).setEnabled(enabled);
 					
-					
 					Log.i("RTG", String.format("ctrlMenu: %s setEnabled %s", tv.getText(), (enabled)?"true":"false"));
 				}
 			}
+			setTabBackgroundColor(host);
         } 
     } 
 
