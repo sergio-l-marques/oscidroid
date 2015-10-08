@@ -86,9 +86,6 @@ public class DataThread extends Thread {
 		return mask;
 	}
 	
-	void enableWindowPreview(boolean enable) {
-		dpv.enableWindowPreview(enable);
-	}
 	void setWindowPreviewSize(int size) {
 		dpv.setWindowPreviewSize(size);
 	}

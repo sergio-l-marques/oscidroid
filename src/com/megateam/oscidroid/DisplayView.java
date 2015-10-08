@@ -182,10 +182,6 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 		 Log.i("RTG", String.format(String.format("displaView: setDisplayXOffset %d", this.xOffset)));
 	 }
 
-	 public void enableWindowPreview(boolean enable) {
-		 previewWindow=enable;
-	 }
-
 	 public void setWindowPreviewSize(int size) {
 
 		 
@@ -220,6 +216,8 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 	 protected void onDraw(Canvas canvas) {
 		 float yFactorAux, xFactorAux, yOffset=0;
 
+		 int windowPreviewHeightFactor=4;
+		 
 		 canvas.drawColor(Color.WHITE);
           
 		 channelPaint.setColor(Color.BLUE);
@@ -231,7 +229,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 			 for (int i=0;i<channelOn.length;i++) {
 				 
 				 if (numChannels>0) {
-					 canvas.drawRect(this.xOffset*xFactor, 0, this.xOffset*xFactor+previewWindowSize*xFactor, surfaceHeight*1/3, channelPaint);
+					 canvas.drawRect(this.xOffset*xFactor, 0, this.xOffset*xFactor+previewWindowSize*xFactor, surfaceHeight/windowPreviewHeightFactor, channelPaint);
 				 }
 				 
 				 if (channelOn[i]==true) {
@@ -239,17 +237,17 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 					 if (channelPath[i].isEmpty()==false) channelPath[i].rewind();
 		              
 					 //Log.i("RTG", String.format(String.format("displaView: chPoints[i][0] %f channelYoffset[i] %f yFactor %f ", chPoints[i][0],(float)channelYoffset[i], (yFactor*1/3))));
-					 channelPath[i].moveTo(0, (chPoints[i][0]+(float)chPoints[i][0]+channelYoffset[i])*(yFactor*1/3)+yOffset);
+					 channelPath[i].moveTo(0, (chPoints[i][0]+(float)chPoints[i][0]+channelYoffset[i])*(yFactor/windowPreviewHeightFactor)+yOffset);
 					 for (int j=1;j<pointsPerChannel;j++) {
-						 channelPath[i].lineTo(j*xFactor, (chPoints[i][j]+channelYoffset[i])*(yFactor*1/3)+yOffset);
+						 channelPath[i].lineTo(j*xFactor, (chPoints[i][j]+channelYoffset[i])*(yFactor/windowPreviewHeightFactor)+yOffset);
 					 }
 
 					 canvas.drawPath(channelPath[i], channelPaint);
 				 }
 			 }
 
-			 yFactorAux=yFactor*2/3;
-			 yOffset=surfaceHeight*1/3;
+			 yFactorAux=yFactor*((float)(windowPreviewHeightFactor-1)/(float)windowPreviewHeightFactor);
+			 yOffset=surfaceHeight/windowPreviewHeightFactor;
 		 } else {
 			 yFactorAux=yFactor;
 			 yOffset=0;

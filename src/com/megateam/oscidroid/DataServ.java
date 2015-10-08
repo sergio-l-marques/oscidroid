@@ -28,8 +28,7 @@ public class DataServ extends Service {
   static final int MSG_SET_ATTENUATION = 8;
   static final int MSG_SET_OFFSET = 9;
   static final int MSG_DRAW_DISPLAY = 10;
-  static final int MSG_ENABLE_WINDOW_PREVIEW= 11;
-  static final int MSG_SET_WINDOW_PREVIEW_SIZE = 12;
+  static final int MSG_SET_WINDOW_PREVIEW_SIZE = 11;
   
   
   private DisplayView dpv=null;
@@ -123,11 +122,6 @@ public class DataServ extends Service {
               case MSG_SET_OFFSET:
                 	Log.i("RTG", String.format("MSG_SET_OFFSET %d %d", msg.arg1, msg.arg2));
                 	setOffset2Thread(msg.arg1, msg.arg2);
-                	break;
-              case MSG_ENABLE_WINDOW_PREVIEW:
-                	Log.i("RTG", String.format("MSG_ENABLE_WINDOW_PREVIEW %d %d", msg.arg1, msg.arg2));
-                	if (msg.arg1>0) enableWindowPreview(true);
-                	else enableWindowPreview(false);
                 	break;
               case MSG_SET_WINDOW_PREVIEW_SIZE:
                 	Log.i("RTG", String.format("MSG_SET_WINDOW_PREVIEW_SIZE %d %d", msg.arg1, msg.arg2));
@@ -236,9 +230,6 @@ public class DataServ extends Service {
 	}
 	void setOffset2Thread(int channel, int offset) {
 		dataThread.setOffset(channel, offset);
-	}
-	void enableWindowPreview(boolean enable) {
-		dataThread.enableWindowPreview(enable);
 	}
 	void setWindowPreviewSize(int size) {
 		dataThread.setWindowPreviewSize(size);

@@ -1,6 +1,8 @@
 package com.megateam.oscidroid;
 
 
+import java.util.ArrayList;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +48,8 @@ import android.view.ViewTreeObserver.OnDrawListener;
 //import android.view.WindowInsets;
 
 public class controlMenu extends FragmentActivity {
-
+	
+	private ArrayList<TabHost.TabSpec> list = new ArrayList<TabHost.TabSpec>();
 	private int numChannels=0;
 	private Handler handler2UI;
 	
@@ -186,11 +189,13 @@ public class controlMenu extends FragmentActivity {
 		spec.setContent(R.id.tab_settings);
 		spec.setIndicator("settings");
 		host.addTab(spec);
+		list.add(spec);
 		
 		spec = host.newTabSpec("trigger");
 		spec.setContent(R.id.tab_trigger);
 		spec.setIndicator("trigger");
 		host.addTab(spec);
+		list.add(spec);
 
  		//set Windows tab as default (zero based)
 		host.setCurrentTab(0);
@@ -237,6 +242,10 @@ public class controlMenu extends FragmentActivity {
 			//host.getTabWidget().getChildAt(k).setBackgroundResource(R.drawable.tab_bg);
             host.getTabWidget().getChildAt(k).setBackgroundColor(Color.TRANSPARENT); // unselected
             host.getTabWidget().getChildTabViewAt(k).setSelected(false);
+
+            final TextView tv = (TextView) host.getTabWidget().getChildAt(k).findViewById(android.R.id.title);
+			if (tv != null) tv.setTextColor(Color.GRAY);
+            
         }
 
         host.getTabWidget().getChildAt(host.getCurrentTab()).setBackgroundColor(Color.TRANSPARENT); // selected
@@ -323,10 +332,6 @@ public class controlMenu extends FragmentActivity {
 				break;
 			case R.id.stopstart:
 				stopStart();
-				break;
-			case R.id.windowButton:
-					enableWindowPreview(((ToggleButton)v).isChecked());
-					drawDisplay();
 				break;
 			default:
 				Log.i("RTG", String.format("ctrlMenu: id %d %d", id, numChannels));
@@ -553,7 +558,12 @@ public class controlMenu extends FragmentActivity {
         		ts[i].setIndicator(String.format("channel%d", i+1));
         		ts[i].setContent(tcf);
         		host.addTab(ts[i]);
+        		list.add(ts[i]);
             }
+            
+			host.clearAllTabs();  // clear all tabs from the tabhost
+			for(TabHost.TabSpec spec : list) // add all that you remember back
+			   host.addTab(spec);
             
 			for (int i = 0; i < host.getTabWidget().getChildCount(); i++) {
 				final TextView tv = (TextView) host.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
@@ -662,19 +672,6 @@ public class controlMenu extends FragmentActivity {
         }
     }
 
-    public void enableWindowPreview(boolean enable) {
-    	int enableInt;
-    	
-    	if (enable) enableInt=1;
-    	else enableInt=0;
-    	
-        Message msg = Message.obtain(null, DataServ.MSG_ENABLE_WINDOW_PREVIEW, enableInt, 0);
-        try {
-            mServiceMessenger.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
     public void setWindowPreviewSize(int size) {
     	
         Message msg = Message.obtain(null, DataServ.MSG_SET_WINDOW_PREVIEW_SIZE, size, 0);
