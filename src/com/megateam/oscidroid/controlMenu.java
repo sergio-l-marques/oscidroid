@@ -49,9 +49,10 @@ import android.view.ViewTreeObserver.OnDrawListener;
 
 public class controlMenu extends FragmentActivity {
 	
-	private ArrayList<TabHost.TabSpec> list = new ArrayList<TabHost.TabSpec>();
+	private ArrayList<TabHost.TabSpec> tabHostList = new ArrayList<TabHost.TabSpec>();
 	private int numChannels=0;
 	private Handler handler2UI;
+	
 	
     /** Messenger for sending messages to the service. */
     private Messenger mServiceMessenger = null;
@@ -145,16 +146,10 @@ public class controlMenu extends FragmentActivity {
         }
     };
 
-	
-    
-    
-    
-	//private DataServConn dataServConn;
-	private LinearLayout channelLL;
-    private TabHost host;
+    private TabHost tabHost;
+    private SeekBar windowPreviewSeekBar;
 	private Button btnStartStop, btnHello;
-	private SeekBar seekBar;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -176,32 +171,32 @@ public class controlMenu extends FragmentActivity {
 
 		setContentView(R.layout.control_menu);
 
-    	host = (TabHost)findViewById(R.id.tab_host);
-		host.setup();
 
-		host.setOnTabChangedListener(new OnTabChangeListener() {
+		tabHost = (TabHost)findViewById(R.id.tab_host);
+		tabHost.setup();
+
+		tabHost.setOnTabChangedListener(new OnTabChangeListener() {
 	        public void onTabChanged(String arg0) {
-	        	setTabBackgroundColor(host);
+	        	setTabBackgroundColor(tabHost);
 	        }
 	    });
 		
-		TabSpec spec = host.newTabSpec("settings");
+		TabSpec spec = tabHost.newTabSpec("settings");
 		spec.setContent(R.id.tab_settings);
 		spec.setIndicator("settings");
-		host.addTab(spec);
-		list.add(spec);
+		tabHost.addTab(spec);
+		tabHostList.add(spec);
 		
-		spec = host.newTabSpec("trigger");
+		spec = tabHost.newTabSpec("trigger");
 		spec.setContent(R.id.tab_trigger);
 		spec.setIndicator("trigger");
-		host.addTab(spec);
-		list.add(spec);
+		tabHost.addTab(spec);
+		tabHostList.add(spec);
 
- 		//set Windows tab as default (zero based)
-		host.setCurrentTab(0);
+			//set Windows tab as default (zero based)
+		tabHost.setCurrentTab(0);
+		setTabBackgroundColor(tabHost);
 
-		setTabBackgroundColor(host);
-		
 		btnStartStop = (Button) findViewById(R.id.stopstart);
     	btnStartStop.setOnClickListener(onClickListenerCB);
     	
@@ -211,19 +206,19 @@ public class controlMenu extends FragmentActivity {
     	//ToggleButton toggleButtonCh = (ToggleButton) findViewById(R.id.windowButton);
     	//toggleButtonCh.setOnClickListener(onClickListenerCB);
     	
-    	seekBar=(SeekBar)(findViewById(R.id.windowSeekBar));
-    	seekBar.setMax(MainActivity.numPointsPerChan-1);
-    	seekBar.setProgress(MainActivity.numPointsPerChan-1);
-    	seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+    	windowPreviewSeekBar=(SeekBar)(findViewById(R.id.windowSeekBar));
+    	windowPreviewSeekBar.setMax(MainActivity.numPointsPerChan-1);
+    	windowPreviewSeekBar.setProgress(MainActivity.numPointsPerChan-1);
+    	windowPreviewSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 			@Override
-			public void onStopTrackingTouch(SeekBar seekBar) {
+			public void onStopTrackingTouch(SeekBar windowPreviewSeekBar) {
 			}
 			@Override
-			public void onStartTrackingTouch(SeekBar seekBar) {
+			public void onStartTrackingTouch(SeekBar windowPreviewSeekBar) {
 			}
 			
 			@Override
-			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			public void onProgressChanged(SeekBar windowPreviewSeekBar, int progress, boolean fromUser) {
 				if(fromUser){
 					Log.i("RTG",String.format("ctrlMenu Client : onProgressChanged progress-->%d", progress));
 					setWindowPreviewSize(progress+1);
@@ -231,95 +226,24 @@ public class controlMenu extends FragmentActivity {
 				}
 			}
 		});
-    	
-    	
-
 	}
 	
-	private void setTabBackgroundColor(TabHost host) {
+	private void setTabBackgroundColor(TabHost tabHost) {
 
-		for (int k = 0; k < host.getTabWidget().getChildCount(); k++) {
-			//host.getTabWidget().getChildAt(k).setBackgroundResource(R.drawable.tab_bg);
-            host.getTabWidget().getChildAt(k).setBackgroundColor(Color.TRANSPARENT); // unselected
-            host.getTabWidget().getChildTabViewAt(k).setSelected(false);
+		for (int k = 0; k < tabHost.getTabWidget().getChildCount(); k++) {
+			//tabHost.getTabWidget().getChildAt(k).setBackgroundResource(R.drawable.tab_bg);
+            tabHost.getTabWidget().getChildAt(k).setBackgroundColor(Color.TRANSPARENT); // unselected
+            tabHost.getTabWidget().getChildTabViewAt(k).setSelected(false);
 
-            final TextView tv = (TextView) host.getTabWidget().getChildAt(k).findViewById(android.R.id.title);
+            final TextView tv = (TextView) tabHost.getTabWidget().getChildAt(k).findViewById(android.R.id.title);
 			if (tv != null) tv.setTextColor(Color.GRAY);
             
         }
 
-        host.getTabWidget().getChildAt(host.getCurrentTab()).setBackgroundColor(Color.TRANSPARENT); // selected
-        host.getTabWidget().getChildTabViewAt(host.getCurrentTab()).setSelected(true);
+        tabHost.getTabWidget().getChildAt(tabHost.getCurrentTab()).setBackgroundColor(Color.TRANSPARENT); // selected
+        tabHost.getTabWidget().getChildTabViewAt(tabHost.getCurrentTab()).setSelected(true);
 	}
 	
-	boolean mOngoing=false;
-	//mOngoingRunnable teste;
-	
-	class mOngoingRunnable implements Runnable {
-		private int chIdx, offset;
-		
-        public mOngoingRunnable(int chIdx, int offset) { 
-        
-        	this.chIdx=chIdx;
-        	this.offset=offset;
-        } 
-
-        @Override 
-        public void run() { 
-        	Log.i("RTG", String.format("ctrlMenu: long press!!!"));
-        	setOffset(chIdx, offset);
-        	if (mOngoing) handler2UI.postDelayed(new mOngoingRunnable(chIdx, offset), 50);
-        }		
-	}
-
-	
-	OnLongClickListener onLongClickListenerChannelCB = new OnLongClickListener() {
-		public boolean onLongClick(View v) {
-			final int id = v.getId(), chIdx, operIdx;
-
-			chIdx=id/1000-1;
-			operIdx=id%1000;
-			
-			if (operIdx==2) handler2UI.post(new mOngoingRunnable(chIdx, +10));
-			else if (operIdx==3) handler2UI.post(new mOngoingRunnable(chIdx, -10));
-			
-		    mOngoing = true;
-		    return false;
-		}
-	};
-	
-	OnClickListener onClickListenerChannelCB = new OnClickListener() {
-		public void onClick(View v) {
-			final int id = v.getId(), chIdx, operIdx;
-			
-			chIdx=id/1000-1;
-			operIdx=id%1000;
-			Log.i("RTG", String.format("ctrlMenu: id %d chIdx %d operIdx %d", id, chIdx, operIdx));
-			
-			switch (operIdx) {
-			case 0: 
-				setAttenuation(chIdx, +1); 
-				break;
-			case 1: 
-				setAttenuation(chIdx, -1); 
-				break;
-			case 2: 
-				setOffset(chIdx, +10);
-			    if (mOngoing) {
-			        mOngoing = false;
-			    } 
-
-				break;
-			case 3: 
-				setOffset(chIdx, -10); 
-			    if (mOngoing) {
-			        mOngoing = false;
-			    }
-				break;
-			default:			
-			}
-		}
-	};
 	
 	OnClickListener onClickListenerCB = new OnClickListener() {
 		public void onClick(View v) {
@@ -340,23 +264,23 @@ public class controlMenu extends FragmentActivity {
 					Log.i("RTG", String.format("ctrlMenu: %s", ((ToggleButton)v).isChecked()?"addSource":"delSource"));
 					if ( ((ToggleButton)v).isChecked() ) {
 						addSource(id-1000-1);
-						for (int i = 0; i < host.getTabWidget().getChildCount(); i++) {
-							final TextView tv = (TextView) host.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
+						for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+							final TextView tv = (TextView) tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
 							if (tv == null)	continue;
 							Log.i("RTG", String.format("ctrlMenu: id %s", tv.getText()));
 							if (tv.getText().equals(String.format("channel%d", id-1001+1))){
 								Log.i("RTG", String.format("ctrlMenu: id setEnabled %d", id));
-								host.getTabWidget().getChildTabViewAt(i).setEnabled(true);
+								tabHost.getTabWidget().getChildTabViewAt(i).setEnabled(true);
 								break;
 							}
 						}
 					} else {
 						delSource(id-1000-1);
-						for (int i = 0; i < host.getTabWidget().getChildCount(); i++) {
-							final TextView tv = (TextView) host.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
+						for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+							final TextView tv = (TextView) tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
 							if (tv == null) continue;
 							if (tv.getText().equals(String.format("channel%d", id-1001+1))){
-								host.getTabWidget().getChildTabViewAt(i).setEnabled(false);
+								tabHost.getTabWidget().getChildTabViewAt(i).setEnabled(false);
 								break;
 							}
 						}
@@ -367,63 +291,12 @@ public class controlMenu extends FragmentActivity {
 		}
 	};
 	
-	OnLayoutChangeListener onLayoutChangeListenerButtonCB = new OnLayoutChangeListener() {          
-
-		@Override
-		public void onLayoutChange(View arg0, int arg1, int arg2, int arg3,
-				int arg4, int arg5, int arg6, int arg7, int arg8) {
-			final int id = arg0.getId(), chIdx, operIdx;
-			
-			chIdx=id/1000-1;
-			operIdx=id%1000;
-			Log.i("RTG", String.format("ctrlMenu: onLayoutChangeListenerButtonCB id %d chIdx %d operIdx %d", id, chIdx, operIdx));
-			switch (operIdx) {
-			case 0: 
-			case 2: 
-				arg0.setBackground(setButtonBackground((Button)arg0, R.drawable.down_arrow_50));
-				break;
-			case 1: 
-			case 3: 
-				arg0.setBackground(setButtonBackground((Button)arg0, R.drawable.up_arrow_50));
-				break;
-			default:			
-			}
-			
-		}
-	};
-	
-	private Drawable setButtonBackground(Button button, int id) {
-		BitmapDrawable bmapScaled;
-		
-	    int height = button.getHeight();
-	    int width = button.getWidth();
-	    
-	    BitmapDrawable bmap = (BitmapDrawable) this.getResources().getDrawable(id);
-	    
-	    float bmapWidth = bmap.getBitmap().getWidth();
-	    float bmapHeight = bmap.getBitmap().getHeight();
-	     
-	    float wRatio = width / bmapWidth;
-	    float hRatio = height / bmapHeight;
-	     
-	    float ratioMultiplier = wRatio;
-	    // Untested conditional though I expect this might work for landscape mode
-	    if (hRatio < wRatio) {
-	    	ratioMultiplier = hRatio;
-	    }
-	     
-	    int newBmapWidth = (int) (bmapWidth*ratioMultiplier);
-	    int newBmapHeight = (int) (bmapHeight*ratioMultiplier);
-	    
-	    bmapScaled = new BitmapDrawable(getResources(),Bitmap.createScaledBitmap(bmap.getBitmap(), newBmapWidth, newBmapHeight, false));
-	    bmapScaled.setGravity(Gravity.CENTER);
-	    bmapScaled.setBounds(0, 0, button.getWidth(), button.getHeight());
-	    
-	    return bmapScaled;
-	}
 	
     class createChannelToggleBtnAndTabs implements Runnable { 
-        private int numChannels, enableChannelsMask, windowPreviewSize; 
+        private int numChannels, enableChannelsMask, windowPreviewSize;
+    	private LinearLayout tglChannelLL;
+    	@SuppressWarnings("unused")
+		private channelTab chanTab;
         
         public createChannelToggleBtnAndTabs(int numChannels, int enableChannelsMask, int windowPreviewSize) { 
             this.numChannels = numChannels;
@@ -435,9 +308,9 @@ public class controlMenu extends FragmentActivity {
 
         	Log.i("RTG", String.format("ctrlMenu: numChannels %d enableChannelsMask %X windowPreviewSize %d", numChannels, enableChannelsMask, windowPreviewSize));
         	
-        	seekBar.setProgress(windowPreviewSize);
+        	windowPreviewSeekBar.setProgress(windowPreviewSize);
         	
-    		channelLL = (LinearLayout) findViewById(R.id.channel);
+        	tglChannelLL = (LinearLayout) findViewById(R.id.toggleChannelsLL);
     		
     		for (int i=0;i<numChannels;i++) {
         		
@@ -458,129 +331,33 @@ public class controlMenu extends FragmentActivity {
 				toggleButtonCh.setChecked(selected);
 
 
-            	channelLL.addView(toggleButtonCh,new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,  LinearLayout.LayoutParams.WRAP_CONTENT));
+				tglChannelLL.addView(toggleButtonCh,new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,  LinearLayout.LayoutParams.WRAP_CONTENT));
         	}
 
-        	
-    		TabSpec[] ts=new TabSpec[4]; 
-    		TabContentFactory tcf;
-       	
-        	tcf=new TabHost.TabContentFactory(){
-                public View createTabContent(String tag) {                                   
-                	
-                	Log.i("RTG","ctrlMenu TAG --> "+tag);
-                	int idx=Integer.parseInt(tag.substring(tag.length()-1));   					            	
-
-                	LinearLayout LL_H = new LinearLayout(getApplicationContext());
-    	            LL_H.setOrientation(LinearLayout.HORIZONTAL);
-    	            LL_H.setWeightSum(2f);
-    	            LL_H.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT));
-
-    	            LinearLayout.LayoutParams llvParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 2.0f);
-    	            llvParams.height=LayoutParams.MATCH_PARENT;
-    	            llvParams.width=0;
-    	            llvParams.weight=1.0f;
-
-                	LinearLayout LL_V1 = new LinearLayout(getApplicationContext());
-    	            LL_V1.setOrientation(LinearLayout.VERTICAL);
-    	            LL_V1.setWeightSum(7f);
-    	            LL_V1.setLayoutParams(llvParams);
-
-    				LinearLayout.LayoutParams bParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f);
-    				bParams.width=LayoutParams.MATCH_PARENT;
-    				bParams.height=0;
-    				bParams.weight=3.0f;
-
-    				LinearLayout.LayoutParams tParams = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, 0, 1.0f);
-    				tParams.width=LayoutParams.MATCH_PARENT;
-    				tParams.height=0;
-    				tParams.weight=1.0f;
-
-    	            
-    	            Button buttonCh = new Button(getApplicationContext());
-    	            buttonCh.setTextColor(Color.BLACK);
-    	      		buttonCh.setId(idx*1000+1);
-    	      		buttonCh.setOnClickListener(onClickListenerChannelCB);
-    	      		buttonCh.addOnLayoutChangeListener(onLayoutChangeListenerButtonCB);
-    	            LL_V1.addView(buttonCh,bParams);
-    	            
-    	            TextView textView = new TextView(getApplicationContext());
-    	            textView.setGravity(Gravity.CENTER);
-    	            textView.setText("AMPLITUDE");
-    	            LL_V1.addView(textView,tParams);
-    	            
-    	            buttonCh = new Button(getApplicationContext());
-    	            buttonCh.setTextColor(Color.BLACK);
-    	      		buttonCh.setId(idx*1000+0);
-    	      		buttonCh.setOnClickListener(onClickListenerChannelCB);
-    	      		buttonCh.addOnLayoutChangeListener(onLayoutChangeListenerButtonCB);
-    	            LL_V1.addView(buttonCh,bParams);
-    	            
-    	            LL_H.addView(LL_V1);
-    	            
-   	            
-                	LinearLayout LL_V2 = new LinearLayout(getApplicationContext());
-    	            LL_V2.setOrientation(LinearLayout.VERTICAL);
-    	            LL_V2.setWeightSum(7f);
-    	            LL_V2.setLayoutParams(llvParams);
-
-    	            buttonCh = new Button(getApplicationContext());
-    	            buttonCh.setTextColor(Color.BLACK);
-    	      		buttonCh.setId(idx*1000+3);
-    	      		buttonCh.setOnClickListener(onClickListenerChannelCB);
-    	      		buttonCh.setOnLongClickListener(onLongClickListenerChannelCB);
-    	      		buttonCh.addOnLayoutChangeListener(onLayoutChangeListenerButtonCB);
-    	      		buttonCh.setLayoutParams(bParams);
-    	            LL_V2.addView(buttonCh);
-
-    	            textView = new TextView(getApplicationContext());
-    	            textView.setGravity(Gravity.CENTER);
-    	            textView.setText("OFFSET");
-    	            LL_V2.addView(textView,tParams);
-    	            
-    	            buttonCh = new Button(getApplicationContext());
-    	            buttonCh.setTextColor(Color.BLACK);
-    	      		buttonCh.setId(idx*1000+2);
-    	      		buttonCh.setOnClickListener(onClickListenerChannelCB);
-    	      		buttonCh.setOnLongClickListener(onLongClickListenerChannelCB);
-    	      		buttonCh.addOnLayoutChangeListener(onLayoutChangeListenerButtonCB);
-    	      		buttonCh.setLayoutParams(bParams);
-    	            LL_V2.addView(buttonCh);
-    	            
-    	            LL_H.addView(LL_V2);
-                	return (LL_H);
-                }       
-            };
-
-
-            for (int i=0;i<numChannels;i++)	{
-            	ts[i]=host.newTabSpec(String.format("CHANNEL%d", i+1));
-        		ts[i].setIndicator(String.format("channel%d", i+1));
-        		ts[i].setContent(tcf);
-        		host.addTab(ts[i]);
-        		list.add(ts[i]);
-            }
-            
-			host.clearAllTabs();  // clear all tabs from the tabhost
-			for(TabHost.TabSpec spec : list) // add all that you remember back
-			   host.addTab(spec);
-            
-			for (int i = 0; i < host.getTabWidget().getChildCount(); i++) {
-				final TextView tv = (TextView) host.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
-				if (tv == null) continue;
-				if (tv.getText().toString().startsWith("channel")){
-					int chIdx=Integer.parseInt(tv.getText().toString().substring(String.format("channel").length(), tv.getText().toString().length()))-1;
-					boolean enabled;
-					
-					if ( (enableChannelsMask&(1<<chIdx)) != 0) enabled=true;
-					else enabled=false;
-					
-					host.getTabWidget().getChildTabViewAt(i).setEnabled(enabled);
-					
-					Log.i("RTG", String.format("ctrlMenu: %s setEnabled %s", tv.getText(), (enabled)?"true":"false"));
-				}
-			}
-			setTabBackgroundColor(host);
+    		chanTab=new channelTab(getApplicationContext(), handler2UI, mServiceMessenger, tabHost, tabHostList, numChannels, enableChannelsMask);
+    		
+    		
+    		tabHost.clearAllTabs();  // clear all tabs from the tabhost
+    		for(TabHost.TabSpec spec : tabHostList) // add all that you remember back
+    		   tabHost.addTab(spec);
+    	    
+    		for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
+    			final TextView tv = (TextView) tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
+    			if (tv == null) continue;
+    			if (tv.getText().toString().startsWith("channel")){
+    				int chIdx=Integer.parseInt(tv.getText().toString().substring(String.format("channel").length(), tv.getText().toString().length()))-1;
+    				boolean enabled;
+    				
+    				if ( (enableChannelsMask&(1<<chIdx)) != 0) enabled=true;
+    				else enabled=false;
+    				
+    				tabHost.getTabWidget().getChildTabViewAt(i).setEnabled(enabled);
+    				
+    				Log.i("RTG", String.format("ctrlMenu: %s setEnabled %s", tv.getText(), (enabled)?"true":"false"));
+    			}
+    		}
+    		
+			setTabBackgroundColor(tabHost);
         } 
     } 
 
@@ -595,8 +372,9 @@ public class controlMenu extends FragmentActivity {
     	//handlerThread.quitSafely();
         handlerThread.quit();
 	}
-	
-    public void sayHello() {
+
+
+	public void sayHello() {
         if (!mBound)
             return;
 
@@ -653,25 +431,6 @@ public class controlMenu extends FragmentActivity {
             e.printStackTrace();
         }
     }
-    public void setAttenuation(int chIdx, int attenuation) {
-    	
-        Message msg = Message.obtain(null, DataServ.MSG_SET_ATTENUATION, chIdx, attenuation);
-        try {
-            mServiceMessenger.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-    public void setOffset(int chIdx, int offset) {
-    	
-        Message msg = Message.obtain(null, DataServ.MSG_SET_OFFSET, chIdx, offset);
-        try {
-            mServiceMessenger.send(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
-
     public void setWindowPreviewSize(int size) {
     	
         Message msg = Message.obtain(null, DataServ.MSG_SET_WINDOW_PREVIEW_SIZE, size, 0);
@@ -681,7 +440,6 @@ public class controlMenu extends FragmentActivity {
             e.printStackTrace();
         }
     }
-    
     public void drawDisplay() {
     	
         Message msg = Message.obtain(null, DataServ.MSG_DRAW_DISPLAY, 0, 0);

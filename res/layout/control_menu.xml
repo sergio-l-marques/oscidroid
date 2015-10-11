@@ -88,7 +88,7 @@
 	        		       	android:layout_width="0dp"
     	    	    	   	android:layout_height="match_parent"
 	    	           		android:orientation="vertical"
-					        android:id="@+id/channel">
+					        android:id="@+id/toggleChannelsLL">
 					    </LinearLayout>
 	           		    	           		    
 	           		    

@@ -28,13 +28,13 @@ public final class R {
     }
     public static final class id {
         public static final int action_settings=0x7f080008;
-        public static final int channel=0x7f080006;
         public static final int hello=0x7f080005;
         public static final int main=0x7f080000;
         public static final int stopstart=0x7f080004;
         public static final int tab_host=0x7f080001;
         public static final int tab_settings=0x7f080002;
         public static final int tab_trigger=0x7f080007;
+        public static final int toggleChannelsLL=0x7f080006;
         public static final int windowSeekBar=0x7f080003;
     }
     public static final class layout {
