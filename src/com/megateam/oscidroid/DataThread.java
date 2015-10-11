@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 import android.view.SurfaceHolder;
 
 @SuppressLint("WrongCall")
@@ -27,13 +26,13 @@ public class DataThread extends Thread {
 	//	this.dataIface=dataIface;
 	//	osciAppContext = osciApp;
 	//	
-	//	Log.i("RTG", String.format("DataThread new")); //Log Message
+	//	L.i( String.format("DataThread new")); //L Message
 	//	exitFlag = false;
 	//	super.start();
 	//}
 	public DataThread(DisplayView dpv) {
 		super();
-		Log.i("RTG", String.format("DataThread: new")); //Log Message
+		L.i( String.format("DataThread: new")); //L Message
 		this.dpv=dpv;
 		exitFlag = false;
 		
@@ -47,7 +46,7 @@ public class DataThread extends Thread {
 	
 	public int addChannel(sourceIface srcIface, int chId) {
 		
-		Log.i("RTG", String.format("DataThread: addChannel %d",  chId)); //Log Message
+		L.i( String.format("DataThread: addChannel %d",  chId)); //L Message
 		dataIface[chId]=srcIface;
 		
 		dpv.newChannel(chId);
@@ -57,7 +56,7 @@ public class DataThread extends Thread {
 	
 	public int delChannel(int chNum) {
 		
-		Log.i("RTG", String.format("DataThread: delChannel %d",  chNum)); //Log Message
+		L.i( String.format("DataThread: delChannel %d",  chNum)); //L Message
 		
 		channelEnable[chNum]=false;
 		dpv.delChannel(chNum);
@@ -94,7 +93,7 @@ public class DataThread extends Thread {
 	}
 	
 	//public void startThread(DisplayView dpv) {
-	//	Log.i("RTG", String.format(String.format("startThread"))); //Log Message
+	//	L.i( String.format(String.format("startThread"))); //L Message
 	//	
 	//	this.dpv = dpv;
 	//	this.surfaceHolder = dpv.getHolder();
@@ -124,7 +123,7 @@ public class DataThread extends Thread {
 		//} catch (InterruptedException e) {
 		//	e.printStackTrace();
 		//}
-		Log.i("RTG", String.format("DataThread stopThread")); //Log Message
+		L.i( String.format("DataThread stopThread")); //L Message
 	}
 
 	public void run() {
@@ -159,7 +158,7 @@ public class DataThread extends Thread {
 					drawDisplayFlag=false;
 				}
 			} else {
-				//Log.i("RTG", String.format("DataThread: stopFlag %s dpvPtr %s",stopFlag?"true":"false", (osciAppContext.displayView==null)?"null":"notNull")); //Log Message
+				//L.i( String.format("DataThread: stopFlag %s dpvPtr %s",stopFlag?"true":"false", (osciAppContext.displayView==null)?"null":"notNull")); //L Message
 				try {
 					sleep(100);
 				} catch (InterruptedException e) {
@@ -168,6 +167,6 @@ public class DataThread extends Thread {
 				}
 			}
 		}
-		Log.i("RTG", String.format("exit Thread")); //Log Message
+		L.i( String.format("exit Thread")); //L Message
 	}
 }

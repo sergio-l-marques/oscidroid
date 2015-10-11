@@ -14,7 +14,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -30,7 +29,6 @@ import android.widget.PopupWindow;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
-	//private DataServConn dataServConn;
 	public static DisplayView displayView;
 	public static Handler mainActivityHandler;
 	
@@ -41,81 +39,23 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		Log.i("RTG", "Starting Activity");
+		L.i( "Starting Activity");
 
 		mainActivityHandler = new Handler();
-		//LinearLayout myLayout = (LinearLayout) findViewById(R.id.main);
 		
-		Log.i("RTG", "Start service");
+		L.i( "Start service");
 		startService(new Intent(this, DataServ.class));
-		
-		
-		//dataServConn= new DataServConn(getApplicationContext(), null);
-		//if (dataServConn.bindService()==true) {
-		//	Log.i("RTG", "Service bind!!!");
-		//	dataServConn.sayHello();
-		//} else {
-		//	Log.i("RTG", "Service NOT BOUND!!!");
-		//}
                                
         Intent i = new Intent("com.megateam.oscidroid.ACTION_BIND");
         bindService(i, mConnection, Context.BIND_AUTO_CREATE);
 		
 		
-		//dataThread=new DataThread(new genData(numPointsPerChan));
-		////dataThread=new DataThread(new usbData(numPointsPerChan));
-		////dataThread=new DataThread(new netData(numPointsPerChan));
-		
-
-		//osciAppContext.displayView=new DisplayView(this, osciAppContext.numPointsPerChan);
-		//osciAppContext.displayView.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.MATCH_PARENT));
-		//myLayout.addView(osciAppContext.displayView);
-		//
-		//osciAppContext.displayView.newChannel(0);
-		//osciAppContext.displayView.newChannel(1);
-        //
-		//osciAppContext.displayView.setClickable(true);
-		//osciAppContext.displayView.setOnTouchListener(new OnTouchListener(){
-		//	public boolean onTouch(View v, MotionEvent event) {
-        //
-		//		//v.getContext()
-		//		
-	    //        float screenX = event.getX();
-	    //        float screenY = event.getY();
-	    //        float viewX = screenX - v.getLeft();
-	    //        float viewY = screenY - v.getTop();
-		//			
-	    //        Intent intent;
-	    //            
-		//		Log.i("RTG", String.format("onTouch %f %f %f %f %d", screenX, screenY, viewX, viewY, v.getHeight())); //Log Message
-		//		
-		//		switch (event.getAction()) {
-		//		case MotionEvent.ACTION_DOWN:
-		//			Log.i("RTG", String.format(String.format("ACTION_DOWN"))); //Log Message
-		//			intent = new Intent(v.getContext(), controlMenu.class);
-		//			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		//			v.getContext().startActivity(intent);
-		//			break;
-		//		case MotionEvent.ACTION_MOVE:
-		//			Log.i("RTG", String.format(String.format("ACTION_MOVE"))); //Log Message
-		//			break;
-		//		case MotionEvent.ACTION_UP:
-		//			Log.i("RTG", String.format(String.format("ACTION_UP"))); //Log Message
-		//			break;
-		//		}
-        //        return false;
-        //    }
-		//});
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		
-		Log.i("RTG", "MainActivity: onStart"); //Log Message
-		//dataServConn.bindService();
-		//dataServConn.addSource(1,2,3);
-		//dataServConn.sayHello();
+		L.i( "MainActivity: onStart"); //L Message
 	}
 
 	
@@ -123,15 +63,8 @@ public class MainActivity extends Activity {
 	protected void onDestroy() {
 		super.onDestroy();
 		
-		Log.i("RTG", "MainActivity: onDestroy"); //Log Message
+		L.i( "MainActivity: onDestroy"); //L Message
 		unbindService(mConnection);
-		
-		//dataServConn.stopService();
-		//dataServConn.unbindService();
-    	//dataServConn.closeConn();   	
-
-		//stopService(new Intent(this, DataServ.class));
-		//Log.i("RTG", "MainActivity: onDestroy->stopService"); //Log Message
 	}
 	
 	
@@ -196,7 +129,7 @@ public class MainActivity extends Activity {
 
             
             
-            Log.i("RTG", String.format("onServiceConnected -----> %s", className.getClassName()));
+            L.i( String.format("onServiceConnected -----> %s", className.getClassName()));
             
             
             // Now that we have the service messenger, lets send our messenger
@@ -233,14 +166,14 @@ public class MainActivity extends Activity {
     	            float viewX = screenX - v.getLeft();
     	            float viewY = screenY - v.getTop();
     					
-    	            Log.i("RTG", String.format("onTouch %f %f %f %f %d", screenX, screenY, viewX, viewY, v.getHeight())); //Log Message
+    	            L.i( String.format("onTouch %f %f %f %f %d", screenX, screenY, viewX, viewY, v.getHeight())); //L Message
     				
     				switch (event.getAction()) {
     				case MotionEvent.ACTION_DOWN:
-    					Log.i("RTG", String.format(String.format("ACTION_DOWN %f", viewX))); //Log Message
+    					L.i( String.format(String.format("ACTION_DOWN %f", viewX))); //L Message
     					break;
     				case MotionEvent.ACTION_MOVE:
-    					Log.i("RTG", String.format(String.format("ACTION_MOVE %f", viewX))); //Log Message
+    					L.i( String.format(String.format("ACTION_MOVE %f", viewX))); //L Message
     					displayView.setDisplayXOffset(viewX);
     		            Message msg = Message.obtain(null, DataServ.MSG_DRAW_DISPLAY, 0, 0);
     		            try {
@@ -248,15 +181,10 @@ public class MainActivity extends Activity {
     		            } catch (RemoteException e) {
     		                e.printStackTrace();
     		            }
-
     					break;
     				case MotionEvent.ACTION_UP:
-    					Log.i("RTG", String.format(String.format("ACTION_UP"))); //Log Message
+    					L.i( String.format(String.format("ACTION_UP"))); //L Message
     					mainActivityHandler.post(new createControlMenuIntent());
-    					
-    					/*intent = new Intent(v.getContext(), controlMenu.class);
-    					intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    					v.getContext().startActivity(intent);*/
     					break;
     				}
                     return false;

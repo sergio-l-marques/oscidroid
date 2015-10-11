@@ -22,10 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".controlMenu" android:theme="@style/Theme.Transparent" />
-        <!-- 
-        <activity android:name=".controlMenu" />
-         -->
+        <activity android:name=".controlMenu" android:theme="@style/Theme.Transparent" android:label=""/>
         <service
             android:name=".DataServ"
 		    android:enabled="true"

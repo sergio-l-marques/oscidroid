@@ -1,8 +1,5 @@
 package com.megateam.oscidroid;
 
-import android.util.Log;
-
-
 public class genData implements sourceIface {
 	
 	private int numPointsPerChannel;
@@ -21,7 +18,7 @@ public class genData implements sourceIface {
 			///this.offset[i]=256/2;
 		}
 
-		Log.i("RTG", String.format("genData new")); //Log Message
+		L.i("RTG", String.format("genData new")); //Log Message
 	}
 	
 	@Override

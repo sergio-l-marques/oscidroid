@@ -13,7 +13,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -35,7 +34,7 @@ public class channelTab {
 	private Handler handler2UI;
 	private Messenger mServiceMessenger;
 	private final Context context;
-
+	
 	channelTab(final Context context, Handler handler2UI,  Messenger messenger, TabHost tabHost, ArrayList<TabHost.TabSpec> tabHostList, int numChannels, int enableChannelsMask) {
 		this.tabHost=tabHost;
 		this.numChannels=numChannels;
@@ -50,7 +49,7 @@ public class channelTab {
 		tcf=new TabHost.TabContentFactory() {
 	        public View createTabContent(String tag) {                                   
 	        	
-	        	Log.i("RTG","ctrlMenu TAG --> "+tag);
+	        	L.d("ctrlMenu TAG --> "+tag);
 	        	int idx=Integer.parseInt(tag.substring(tag.length()-1));   					            	
 
 	        	LinearLayout LL_H = new LinearLayout(context);
@@ -157,7 +156,7 @@ public class channelTab {
 
         @Override 
         public void run() { 
-        	Log.i("RTG", String.format("ctrlMenu: long press!!!"));
+        	L.i( String.format("ctrlMenu: long press!!!"));
         	setOffset(chIdx, offset);
         	if (mOngoing) handler2UI.postDelayed(new mOngoingRunnable(chIdx, offset), 50);
         }		
@@ -185,7 +184,7 @@ public class channelTab {
 			
 			chIdx=id/1000-1;
 			operIdx=id%1000;
-			Log.i("RTG", String.format("ctrlMenu: id %d chIdx %d operIdx %d", id, chIdx, operIdx));
+			L.i( String.format("ctrlMenu: id %d chIdx %d operIdx %d", id, chIdx, operIdx));
 			
 			switch (operIdx) {
 			case 0: 
@@ -221,7 +220,7 @@ public class channelTab {
 			
 			chIdx=id/1000-1;
 			operIdx=id%1000;
-			Log.i("RTG", String.format("ctrlMenu: onLayoutChangeListenerButtonCB id %d chIdx %d operIdx %d", id, chIdx, operIdx));
+			L.i( String.format("ctrlMenu: onLayoutChangeListenerButtonCB id %d chIdx %d operIdx %d", id, chIdx, operIdx));
 			switch (operIdx) {
 			case 0: 
 			case 2: 

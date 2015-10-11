@@ -77,9 +77,9 @@ public final class R {
          */
         public static final int AppTheme=0x7f060001;
         /** 
+    <item name="android:windowNoTitle">true</item>
     <item name="android:windowIsFloating">true</item>
     <item name="android:windowContentOverlay">@null</item>
-    <item name="android:windowNoTitle">true</item>
     <item name="android:backgroundDimEnabled">false</item>
    	
          */

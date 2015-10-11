@@ -11,7 +11,6 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
-import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
 
@@ -73,7 +72,7 @@ public class DataServ extends Service {
                    * Do whatever we want with the client messenger: Messenger
                    * clientMessenger = msg.replyTo
                    */
-              	Log.i("RTG", "Service : Client said hello!");
+              	L.i( "Service : Client said hello!");
                   Toast.makeText(getApplicationContext(),
                           "Service : Client said hello!", Toast.LENGTH_SHORT)
                           .show();
@@ -83,13 +82,13 @@ public class DataServ extends Service {
                   }
                   break;
               case MSG_START_STOP:
-                   Log.i("RTG", String.format("Service MSG_START_STOP dataThread %s", (dataThread==null)?"null":"ok"));
+                   L.i( String.format("Service MSG_START_STOP dataThread %s", (dataThread==null)?"null":"ok"));
                    stopStartDataThread();
                    /*if (osciAppContext.dataThread!=null)
                   	 osciAppContext.dataThread.startStop();*/
               	break;
               case MSG_DRAW_DISPLAY:
-                  Log.i("RTG", String.format("Service MSG_DRAW_DISPLAY dataThread %s", (dataThread==null)?"null":"ok"));
+                  L.i( String.format("Service MSG_DRAW_DISPLAY dataThread %s", (dataThread==null)?"null":"ok"));
               	drawDisplayDataThread();                	
               	break;
               //case MSG_SOURCE_GEN: 
@@ -102,29 +101,29 @@ public class DataServ extends Service {
               //	osciAppContext.dataThread=new DataThread(new netData(osciAppContext.numPointsPerChan), osciAppContext); 
               //	break;
               case MSG_STOP_SERVICE:
-              	Log.i("RTG", "Service stopSelf");
+              	L.i( "Service stopSelf");
               	stopSelf();
               	break;
               case MSG_ADD_SOURCE:
-              	Log.i("RTG", String.format("MSG_ADD_SOURCE %d", msg.arg1));
+              	L.i( String.format("MSG_ADD_SOURCE %d", msg.arg1));
              		addChannel2Thread(msg.arg1);
               	break;
               case MSG_DEL_SOURCE:
-              	Log.i("RTG", String.format("MSG_DEL_SOURCE %d", msg.arg1));
+              	L.i( String.format("MSG_DEL_SOURCE %d", msg.arg1));
              		delChannel2Thread(msg.arg1);
               	
              		//dataThread.addChannel(0, 0, 0);
               	break;
               case MSG_SET_ATTENUATION:
-              	Log.i("RTG", String.format("MSG_SET_ATTENUATION %d %d", msg.arg1, msg.arg2));
+              	L.i( String.format("MSG_SET_ATTENUATION %d %d", msg.arg1, msg.arg2));
               	setAttenuation2Thread(msg.arg1, msg.arg2);
               	break;
               case MSG_SET_OFFSET:
-                	Log.i("RTG", String.format("MSG_SET_OFFSET %d %d", msg.arg1, msg.arg2));
+                	L.i( String.format("MSG_SET_OFFSET %d %d", msg.arg1, msg.arg2));
                 	setOffset2Thread(msg.arg1, msg.arg2);
                 	break;
               case MSG_SET_WINDOW_PREVIEW_SIZE:
-                	Log.i("RTG", String.format("MSG_SET_WINDOW_PREVIEW_SIZE %d %d", msg.arg1, msg.arg2));
+                	L.i( String.format("MSG_SET_WINDOW_PREVIEW_SIZE %d %d", msg.arg1, msg.arg2));
                 	setWindowPreviewSize(msg.arg1);
                 	break;
               default:
@@ -159,7 +158,7 @@ public class DataServ extends Service {
        * killed
        */
       //osciAppContext=(OsciApp)getApplicationContext();
-      Log.i("RTG", "Service onCreate END");
+      L.i( "Service onCreate END");
   }
   
 	@Override
@@ -174,7 +173,7 @@ public class DataServ extends Service {
 		//if (osciAppContext.dataThread!=null) {
 	    //    if (osciAppContext.sourceType==osciAppContext.SOURCE_TYPE_GEN) {
 	    //    	osciAppContext.dataThread=new DataThread(new genData(osciAppContext.numPointsPerChan), osciAppContext);
-	    //        Log.i("RTG", "Starting Generator dataThread");
+	    //        L.i( "Starting Generator dataThread");
 	    //    } else if (osciAppContext.sourceType==osciAppContext.SOURCE_TYPE_NET) {
 	    //    	osciAppContext.dataThread=new DataThread(new netData(osciAppContext.numPointsPerChan), osciAppContext);
 	    //    } else if(osciAppContext.sourceType==osciAppContext.SOURCE_TYPE_USB) {
@@ -183,21 +182,21 @@ public class DataServ extends Service {
 	    //    	;
 	    //    }
 		//} else {
-		//	Log.i("RTG", "Service onStart osciAppContext.dataThread=null!!!!!!!");
+		//	L.i( "Service onStart osciAppContext.dataThread=null!!!!!!!");
 		//}
-		Log.i("RTG", "Service onStart");
+		L.i( "Service onStart");
 	}
 
 	
 	@Override
 	public void onDestroy() {
 		
-      Log.i("RTG", "Service onDestroy");
+      L.i( "Service onDestroy");
 
       //if (osciAppContext.dataThread!=null)
 		//osciAppContext.dataThread.stopThread();
 		
-      Log.i("RTG", "Service onDestroy END");
+      L.i( "Service onDestroy END");
 		//Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
   }
 	

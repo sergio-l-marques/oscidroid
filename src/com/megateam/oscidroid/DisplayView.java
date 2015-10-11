@@ -16,7 +16,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -54,7 +53,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
     	this.previewWindowSize=MainActivity.numPointsPerChan;
     	//OsciApp osciAppContext=((OsciApp) context);
     	
-    	Log.i("RTG", String.format(String.format("DisplayView 1")));
+    	L.i( String.format(String.format("DisplayView 1")));
   
     	holder = getHolder();
     	holder.addCallback(this);
@@ -77,7 +76,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
     		channelPath[i]=new Path();
     		channelYoffset[i]=0;
     	}
-    	Log.i("RTG", String.format("DisplayView 2"));
+    	L.i( String.format("DisplayView 2"));
     }
     
     @Override
@@ -85,7 +84,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
     	
     	
     	//osciAppContext.dataThread.stopThread();
-    	Log.i("RTG", String.format("surfaceDestroyed"));
+    	L.i( String.format("surfaceDestroyed"));
         // Now that we have the service messenger, lets send our messenger
         Message msg = Message.obtain(null, DataServ.MSG_STOP_SERVICE, 0, 0);
         //msg.replyTo = mClientMessenger;
@@ -113,7 +112,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
     	xFactor=surfaceWitdh/(float)pointsPerChannel;
     	yFactor=surfaceHeight/(float)256;
     	
-    	Log.i("RTG", String.format(String.format("surfaceCreated 1 %d %d %f %f", surfaceHeight, surfaceWitdh, xFactor, yFactor)));
+    	L.i( String.format(String.format("surfaceCreated 1 %d %d %f %f", surfaceHeight, surfaceWitdh, xFactor, yFactor)));
         Message msg = Message.obtain(null, DataServ.MSG_SAY_HELLO, 0, 0);
         msg.obj=this;
         try {
@@ -179,18 +178,18 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 		 else 
 			 this.xOffset=(int) (offset/xFactor);//(offset*xFactor);
 
-		 Log.i("RTG", String.format(String.format("displaView: setDisplayXOffset %d", this.xOffset)));
+		 L.i( String.format(String.format("displaView: setDisplayXOffset %d", this.xOffset)));
 	 }
 
 	 public void setWindowPreviewSize(int size) {
 
 		 
-		 Log.i("RTG", String.format(String.format("displaView: setWindowPreviewSize xOffset %d size %d", this.xOffset, size)));
+		 L.i( String.format(String.format("displaView: setWindowPreviewSize xOffset %d size %d", this.xOffset, size)));
 
 		 if (this.xOffset+size>=this.pointsPerChannel) {
 			 this.xOffset=(this.pointsPerChannel-size);
 		 } 
-		 Log.i("RTG", String.format(String.format("displaView: setWindowPreviewSize xOffset %d", this.xOffset)));
+		 L.i( String.format(String.format("displaView: setWindowPreviewSize xOffset %d", this.xOffset)));
 
 		 previewWindowSize=size;
 
@@ -207,11 +206,20 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 	 
 	 public void setPoints(int chNum, byte[] point) {
 		 for (int i=0;i<point.length;i++) {
-			 //Log.i("RTG", String.format(String.format("displaView: setPoints %f", (float)point[i])));
+			 //L.i( String.format(String.format("displaView: setPoints %f", (float)point[i])));
 			 chPoints[chNum][i]=(float)point[i];
 		 }
 	 }
 
+	  @Override
+	  public boolean onTouchEvent(MotionEvent event) {
+		  super.onTouchEvent(event);
+
+		  L.i( String.format(String.format("onTouchEvent: %f", event.getX()))); //L Message
+
+		  return true;
+	  }
+	 
 	 @Override
 	 protected void onDraw(Canvas canvas) {
 		 float yFactorAux, xFactorAux, yOffset=0;
@@ -236,7 +244,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 
 					 if (channelPath[i].isEmpty()==false) channelPath[i].rewind();
 		              
-					 //Log.i("RTG", String.format(String.format("displaView: chPoints[i][0] %f channelYoffset[i] %f yFactor %f ", chPoints[i][0],(float)channelYoffset[i], (yFactor*1/3))));
+					 //L.i( String.format(String.format("displaView: chPoints[i][0] %f channelYoffset[i] %f yFactor %f ", chPoints[i][0],(float)channelYoffset[i], (yFactor*1/3))));
 					 channelPath[i].moveTo(0, (chPoints[i][0]+(float)chPoints[i][0]+channelYoffset[i])*(yFactor/windowPreviewHeightFactor)+yOffset);
 					 for (int j=1;j<pointsPerChannel;j++) {
 						 channelPath[i].lineTo(j*xFactor, (chPoints[i][j]+channelYoffset[i])*(yFactor/windowPreviewHeightFactor)+yOffset);

@@ -34,7 +34,6 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabHost.TabSpec;
 import android.widget.TabWidget;
 import android.widget.ToggleButton;
-import android.util.Log;
 //import android.view.View.OnApplyWindowInsetsListener;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -92,7 +91,7 @@ public class controlMenu extends FragmentActivity {
                 break;
             case DataServ.MSG_NUM_CHANNELS:
             	numChannels=msg.getData().getInt("numChannels");
-            	Log.i("RTG",String.format("ctrlMenu Client : Service said %d Channels %X!", numChannels,msg.getData().getInt("maskChannels")));
+            	L.i(String.format("ctrlMenu Client : Service said %d Channels %X!", numChannels,msg.getData().getInt("maskChannels")));
             	
             	handler2UI.post(new createChannelToggleBtnAndTabs(msg.getData().getInt("numChannels"), msg.getData().getInt("maskChannels"), msg.getData().getInt("windowSize")));
                 break;
@@ -115,7 +114,7 @@ public class controlMenu extends FragmentActivity {
             mServiceMessenger = new Messenger(service);
 
             
-            Log.i("RTG", String.format("onServiceConnected --> %s", className.getClassName()));
+            L.i( String.format("onServiceConnected --> %s", className.getClassName()));
             
             
             // Now that we have the service messenger, lets send our messenger
@@ -154,7 +153,7 @@ public class controlMenu extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.i("RTG", String.format("ctrlMenu: onCreate"));
+		L.i( String.format("ctrlMenu: onCreate"));
 
 		handler2UI= new Handler();
 		
@@ -220,7 +219,7 @@ public class controlMenu extends FragmentActivity {
 			@Override
 			public void onProgressChanged(SeekBar windowPreviewSeekBar, int progress, boolean fromUser) {
 				if(fromUser){
-					Log.i("RTG",String.format("ctrlMenu Client : onProgressChanged progress-->%d", progress));
+					L.i(String.format("ctrlMenu Client : onProgressChanged progress-->%d", progress));
 					setWindowPreviewSize(progress+1);
 					drawDisplay();
 				}
@@ -249,7 +248,7 @@ public class controlMenu extends FragmentActivity {
 		public void onClick(View v) {
 			final int id = v.getId();
 			
-			Log.i("RTG", String.format("ctrlMenu: channelLL.setOnClickListener id %d", id));
+			L.i( String.format("ctrlMenu: channelLL.setOnClickListener id %d", id));
 			switch (id) {
 			case R.id.hello:
 				sayHello();
@@ -258,18 +257,18 @@ public class controlMenu extends FragmentActivity {
 				stopStart();
 				break;
 			default:
-				Log.i("RTG", String.format("ctrlMenu: id %d %d", id, numChannels));
+				L.i( String.format("ctrlMenu: id %d %d", id, numChannels));
 				if ((id>=1001)&&(id<=1000+numChannels)) {
 					
-					Log.i("RTG", String.format("ctrlMenu: %s", ((ToggleButton)v).isChecked()?"addSource":"delSource"));
+					L.i( String.format("ctrlMenu: %s", ((ToggleButton)v).isChecked()?"addSource":"delSource"));
 					if ( ((ToggleButton)v).isChecked() ) {
 						addSource(id-1000-1);
 						for (int i = 0; i < tabHost.getTabWidget().getChildCount(); i++) {
 							final TextView tv = (TextView) tabHost.getTabWidget().getChildAt(i).findViewById(android.R.id.title);
 							if (tv == null)	continue;
-							Log.i("RTG", String.format("ctrlMenu: id %s", tv.getText()));
+							L.i( String.format("ctrlMenu: id %s", tv.getText()));
 							if (tv.getText().equals(String.format("channel%d", id-1001+1))){
-								Log.i("RTG", String.format("ctrlMenu: id setEnabled %d", id));
+								L.i( String.format("ctrlMenu: id setEnabled %d", id));
 								tabHost.getTabWidget().getChildTabViewAt(i).setEnabled(true);
 								break;
 							}
@@ -306,7 +305,7 @@ public class controlMenu extends FragmentActivity {
         @Override 
         public void run() { 
 
-        	Log.i("RTG", String.format("ctrlMenu: numChannels %d enableChannelsMask %X windowPreviewSize %d", numChannels, enableChannelsMask, windowPreviewSize));
+        	L.i( String.format("ctrlMenu: numChannels %d enableChannelsMask %X windowPreviewSize %d", numChannels, enableChannelsMask, windowPreviewSize));
         	
         	windowPreviewSeekBar.setProgress(windowPreviewSize);
         	
@@ -353,7 +352,7 @@ public class controlMenu extends FragmentActivity {
     				
     				tabHost.getTabWidget().getChildTabViewAt(i).setEnabled(enabled);
     				
-    				Log.i("RTG", String.format("ctrlMenu: %s setEnabled %s", tv.getText(), (enabled)?"true":"false"));
+    				L.i( String.format("ctrlMenu: %s setEnabled %s", tv.getText(), (enabled)?"true":"false"));
     			}
     		}
     		
