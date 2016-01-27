@@ -12,75 +12,70 @@ import android.view.SurfaceHolder;
 @SuppressLint("WrongCall")
 public class DataThread extends Thread {
 	
-	private static final long SLEEP_TIME = 20;
-	private static final int MAX_NUM_CHANNELS = 4;
+	private static final long SLEEP_TIME = 1;
+	//private static final int MAX_NUM_CHANNELS = 4;
 	
 	//private SurfaceHolder surfaceHolder=null;
 	private boolean exitFlag=false, stopFlag=false, drawDisplayFlag=false;
 	private DisplayView dpv=null;
-	private sourceIface[] dataIface=new sourceIface[MAX_NUM_CHANNELS];
-	private boolean [] channelEnable=new boolean[MAX_NUM_CHANNELS];  
+	private sourceIface dataIface=null; //new sourceIface[MAX_NUM_CHANNELS];
+	//private boolean [] channelEnable=new boolean[MAX_NUM_CHANNELS];  
 	
-	//public DataThread(sourceIface dataIface, OsciApp osciApp) {
-	//	super();
-	//	this.dataIface=dataIface;
-	//	osciAppContext = osciApp;
-	//	
-	//	L.i( String.format("DataThread new")); //L Message
-	//	exitFlag = false;
-	//	super.start();
-	//}
-	public DataThread(DisplayView dpv) {
+	public DataThread() {
 		super();
+
 		L.i( String.format("DataThread: new")); //L Message
-		this.dpv=dpv;
 		exitFlag = false;
-		
-		for (int i=0; i<MAX_NUM_CHANNELS;i++) {
-			channelEnable[i]=false;
-		}
 		
 		super.start();
 	}
+
+	public void setDisplayView(DisplayView dpv){
+		this.dpv=dpv;
+	}
 	
+	public void setOsciDevType(sourceIface srcIface) {
+		dataIface=srcIface;
+	}
 	
-	public int addChannel(sourceIface srcIface, int chId) {
+	public int enableChannel(int chNum) {
 		
-		L.i( String.format("DataThread: addChannel %d",  chId)); //L Message
-		dataIface[chId]=srcIface;
+		L.i( String.format("DataThread: enableChannel %d",  chNum)); //L Message
 		
-		dpv.newChannel(chId);
-		channelEnable[chId]=true;
+		//TODO enviar esta informação de forma automática para a classe dpv
+		dpv.newChannel(chNum);
+		dataIface.enableChannel(chNum);
 		return 0;
 	}
 	
-	public int delChannel(int chNum) {
+	public int disableChannel(int chNum) {
 		
-		L.i( String.format("DataThread: delChannel %d",  chNum)); //L Message
+		L.i( String.format("DataThread: disableChannel %d",  chNum)); //L Message
 		
-		channelEnable[chNum]=false;
+		//TODO enviar esta informação de forma automática para a classe dpv
 		dpv.delChannel(chNum);
+		dataIface.disableChannel(chNum);
 
 		return 0;
 	}
 
 	void setAttenuation(int channel, int attenuation) {
 
-		dataIface[channel].setAttenuation(channel, attenuation);
+		dataIface.setAttenuation(channel, attenuation);
 	}
 	
 	void setOffset(int channel, int offset) {
 		
-		dataIface[channel].setOffset(channel, offset);
+		dataIface.setOffset(channel, offset);
 		dpv.setChannelYoffset(channel, (byte) offset);
 	}
 
 	public int getEnabledChannelsMask() {
-		int mask=0;
+		int mask=0x0f;
 		
-		for (int i=0;i<MAX_NUM_CHANNELS;i++) {
+/*		for (int i=0;i<MAX_NUM_CHANNELS;i++) {
 			if (channelEnable[i]==true) mask|=(1<<i);
-		}
+		}*/
 		
 		return mask;
 	}
@@ -88,21 +83,11 @@ public class DataThread extends Thread {
 	void setWindowPreviewSize(int size) {
 		dpv.setWindowPreviewSize(size);
 	}
+	
 	int getWindowPreviewSize() {
 		return dpv.getWindowPreviewSize();
 	}
 	
-	//public void startThread(DisplayView dpv) {
-	//	L.i( String.format(String.format("startThread"))); //L Message
-	//	
-	//	this.dpv = dpv;
-	//	this.surfaceHolder = dpv.getHolder();
-	//			
-	//	exitFlag = false;
-	//	
-	//	super.start();
-	//}
-
 	public void startStop() {
 		if (this.stopFlag==true) this.stopFlag=false;
 		else this.stopFlag=true;
@@ -131,15 +116,20 @@ public class DataThread extends Thread {
 		Canvas c = null;
 		while (exitFlag==false)	{
 			//if (exitFlag==true) {
-			if (stopFlag==false) {
+			if ((stopFlag==false)&&(dpv!=null)) {
 				
 				c = null;
 				try	{
 					c = dpv.getHolder().lockCanvas();
 					synchronized (dpv.getHolder()) {
-						if (c != null) {
-							if (channelEnable[0]&&!drawDisplayFlag) dpv.setPoints(0, dataIface[0].getSamples(0));
-							if (channelEnable[1]&&!drawDisplayFlag) dpv.setPoints(1, dataIface[1].getSamples(1));
+						if ((c != null) && dataIface!=null) {
+							
+							dataIface.fetchData();
+
+							for (int i=0; i<dataIface.getNumChannels();i++){
+								dpv.setPoints(i, dataIface.getSamples(i));
+							}
+							
 							dpv.onDraw(c);
 						}
 					}

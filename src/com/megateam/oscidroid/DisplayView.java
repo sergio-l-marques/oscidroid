@@ -149,7 +149,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 			 for (int i=0;i<this.pointsPerChannel;i++) {
 				 chPoints[chNum][i]=0;
 			 }
-			 channelYoffset[chNum]=256/2;///0/*surfaceHeight/2*/;
+			 channelYoffset[chNum]=0;//256/2;///0/*surfaceHeight/2*/;
 			 channelOn[chNum]=true;
 			 numChannels++;
 		 }
@@ -207,7 +207,7 @@ public class DisplayView extends SurfaceView implements SurfaceHolder.Callback{
 	 public void setPoints(int chNum, byte[] point) {
 		 for (int i=0;i<point.length;i++) {
 			 //L.i( String.format(String.format("displaView: setPoints %f", (float)point[i])));
-			 chPoints[chNum][i]=(float)point[i];
+			 chPoints[chNum][i]=(float)((int)(point[i]&0xFF));//para que seja "unsigned byte"
 		 }
 	 }
 

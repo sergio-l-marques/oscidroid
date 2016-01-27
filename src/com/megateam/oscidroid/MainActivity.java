@@ -28,9 +28,16 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+
+
+
 public class MainActivity extends Activity {
 	public static DisplayView displayView;
 	public static Handler mainActivityHandler;
+	
+	
+	
+	
 	
 	public final static int numPointsPerChan=1024;
 	
@@ -43,13 +50,24 @@ public class MainActivity extends Activity {
 
 		mainActivityHandler = new Handler();
 		
+		/*L.i( "Start service");
+		startService(new Intent(this, DataServ.class));*/
+
+		/*L.i( "Start service");
+		Intent is=new Intent(this, DataServ.class);
+		is.putExtras(getIntent());
+		startService(is);*/
+		
 		L.i( "Start service");
-		startService(new Intent(this, DataServ.class));
+        Intent intent = new Intent(this, DataServ.class);
+        intent.fillIn(getIntent(), 0); // TODO: Find better way to get extras for `UsbManager.getAccessory()` use?
+        startService(intent);
+
+		
                                
         Intent i = new Intent("com.megateam.oscidroid.ACTION_BIND");
         bindService(i, mConnection, Context.BIND_AUTO_CREATE);
-		
-		
+		 
 	}
 
 	@Override

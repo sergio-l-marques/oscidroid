@@ -38,4 +38,28 @@ public class netData implements sourceIface{
 		
 	}
 
+	@Override
+	public void fetchData() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public int getNumChannels() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int enableChannel(int chNum) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int disableChannel(int chNum) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

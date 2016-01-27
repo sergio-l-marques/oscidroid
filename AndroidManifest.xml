@@ -5,7 +5,7 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="8"
+        android:minSdkVersion="12"
         android:targetSdkVersion="21" />
 
     <application
@@ -18,9 +18,11 @@
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
             </intent-filter>
+            <meta-data android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED"
+				android:resource="@xml/accessory_filter" />
         </activity>
         <activity android:name=".controlMenu" android:theme="@style/Theme.Transparent" android:label=""/>
         <service
@@ -30,7 +32,14 @@
             <intent-filter>
             	<action android:name="com.megateam.oscidroid.ACTION_BIND">
                 </action>
-            </intent-filter>
+             </intent-filter>
         </service>
+        <receiver android:name="UsbReceiver">
+			<intent-filter>
+				<action android:name="android.hardware.usb.action.USB_ACCESSORY_ATTACHED" />
+			</intent-filter>
+		</receiver>
+
+		android:debuggable="true"
     </application>
 </manifest>

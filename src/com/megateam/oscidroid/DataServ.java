@@ -3,16 +3,49 @@ package com.megateam.oscidroid;
 
 //http://www.marioalmeida.eu/2014/02/21/how-to-do-android-ipc-using-messenger-to-a-remote-service/
 
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.hardware.usb.UsbAccessory;
+import android.hardware.usb.UsbManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.Messenger;
 import android.os.RemoteException;
+import android.telephony.SmsMessage;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.widget.Toast;
+
+
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import android.app.Activity;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.database.Cursor;
+import android.hardware.usb.UsbAccessory;
+import android.hardware.usb.UsbManager;
+import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
+import android.provider.ContactsContract.PhoneLookup;
+import android.util.Log;
 
 public class DataServ extends Service {
   private DataThread dataThread=null;
@@ -106,13 +139,11 @@ public class DataServ extends Service {
               	break;
               case MSG_ADD_SOURCE:
               	L.i( String.format("MSG_ADD_SOURCE %d", msg.arg1));
-             		addChannel2Thread(msg.arg1);
+              	enableChannel(msg.arg1);
               	break;
               case MSG_DEL_SOURCE:
               	L.i( String.format("MSG_DEL_SOURCE %d", msg.arg1));
-             		delChannel2Thread(msg.arg1);
-              	
-             		//dataThread.addChannel(0, 0, 0);
+              	disableChannel(msg.arg1);
               	break;
               case MSG_SET_ATTENUATION:
               	L.i( String.format("MSG_SET_ATTENUATION %d %d", msg.arg1, msg.arg2));
@@ -157,60 +188,52 @@ public class DataServ extends Service {
        * You might want to start this Service on Foreground so it doesnt get
        * killed
        */
+
+      dataThread=new DataThread();
+
       //osciAppContext=(OsciApp)getApplicationContext();
       L.i( "Service onCreate END");
   }
   
+  
+  
+	//private genData gData;
+  	private usbData uData;
+
+
 	@Override
 	public void onStart(Intent intent, int startId) {
 
-		// For time consuming an long tasks you can launch a new thread here...
-		//Toast.makeText(this, String.format("Service Started %X", osciAppContext.sourceType), Toast.LENGTH_LONG).show();
-
-		//if (osciAppContext==null) osciAppContext=(OsciApp)getApplicationContext();
-		//
-		//osciAppContext=(OsciApp)getApplicationContext();
-		//if (osciAppContext.dataThread!=null) {
-	    //    if (osciAppContext.sourceType==osciAppContext.SOURCE_TYPE_GEN) {
-	    //    	osciAppContext.dataThread=new DataThread(new genData(osciAppContext.numPointsPerChan), osciAppContext);
-	    //        L.i( "Starting Generator dataThread");
-	    //    } else if (osciAppContext.sourceType==osciAppContext.SOURCE_TYPE_NET) {
-	    //    	osciAppContext.dataThread=new DataThread(new netData(osciAppContext.numPointsPerChan), osciAppContext);
-	    //    } else if(osciAppContext.sourceType==osciAppContext.SOURCE_TYPE_USB) {
-	    //    	osciAppContext.dataThread=new DataThread(new usbData(osciAppContext.numPointsPerChan), osciAppContext);
-	    //    } else {
-	    //    	;
-	    //    }
-		//} else {
-		//	L.i( "Service onStart osciAppContext.dataThread=null!!!!!!!");
-		//}
+		uData=new usbData(getApplicationContext(), intent, MainActivity.numPointsPerChan);
+		//gData=new genData(MainActivity.numPointsPerChan);
+		
+		dataThread.setOsciDevType(uData);
+	
+        
 		L.i( "Service onStart");
 	}
 
-	
 	@Override
 	public void onDestroy() {
 		
       L.i( "Service onDestroy");
-
+      
       //if (osciAppContext.dataThread!=null)
 		//osciAppContext.dataThread.stopThread();
 		
       L.i( "Service onDestroy END");
 		//Toast.makeText(this, "Service Destroyed", Toast.LENGTH_LONG).show();
-  }
+	}
 	
-	private genData gData;
 	void createDataThread(DisplayView dpv) {
-		dataThread=new DataThread(dpv);
-		gData=new genData(MainActivity.numPointsPerChan);
+		dataThread.setDisplayView(dpv);
 	}
 
-	void addChannel2Thread(int chIdx) {
-		dataThread.addChannel(gData, chIdx);
+	void enableChannel(int chIdx) {
+		dataThread.enableChannel(chIdx);
 	}
-	void delChannel2Thread(int chIdx) {
-		dataThread.delChannel(chIdx);
+	void disableChannel(int chIdx) {
+		dataThread.disableChannel(chIdx);
 	}
 	void stopStartDataThread() {
 		dataThread.startStop();
@@ -233,6 +256,4 @@ public class DataServ extends Service {
 	void setWindowPreviewSize(int size) {
 		dataThread.setWindowPreviewSize(size);
 	}
-
-
 }

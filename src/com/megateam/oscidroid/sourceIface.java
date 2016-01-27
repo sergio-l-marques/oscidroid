@@ -1,9 +1,13 @@
 package com.megateam.oscidroid;
 
 public interface sourceIface {
-	byte[] getSamples(int channel);
-	float[] getMeasures(int channel);
-	int setTriger(int channel, int type);
-	void setAttenuation(int channel, int attenuation);
-	void setOffset(int channel, int offset);
+	int getNumChannels();
+	int enableChannel(int chNum);
+	int disableChannel(int chNum);
+	void fetchData();
+	byte[] getSamples(int chNum);
+	float[] getMeasures(int chNum);
+	int setTriger(int chNum, int type);
+	void setAttenuation(int chNum, int attenuation);
+	void setOffset(int chNum, int offset);
 }
