@@ -4,6 +4,10 @@ import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.OptionalDataException;
+import java.io.Serializable;
+import java.io.StreamCorruptedException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
@@ -32,6 +36,10 @@ public class usbData implements sourceIface {
 	private FileInputStream mFin = null;
 	private PendingIntent mPermissionIntent = null;
 
+	
+	private ObjectInputStream mSerialIn=null;
+	
+	
 	private boolean readUsbThread=false;
 //	private BlockingQueue<byte[]> queue;
 	
@@ -233,7 +241,7 @@ public class usbData implements sourceIface {
 	@Override
 	public void fetchData() {
 		int numBytes=0;
-		
+				
 		//L.i(String.format("USB: fetchData"));
 		if (mFin!=null) {
 			try {
@@ -246,8 +254,8 @@ public class usbData implements sourceIface {
 		
 		ByteBuffer cfgStruct=ByteBuffer.wrap(uBuff);
 		cfgStruct.order(ByteOrder.LITTLE_ENDIAN);
-		L.i(String.format("USB: fetch %d %d %d %d", cfgStruct.get(), cfgStruct.get(), cfgStruct.get(), cfgStruct.getInt()));
-		//versao modo admin xdiv
+		L.i(String.format("USB: fetch %d %d %d %d %d", cfgStruct.get(), cfgStruct.get(), cfgStruct.getInt(), cfgStruct.get(), cfgStruct.getInt()));
+		//versao modo xdiv admin ydiv
 	}
 	
 	@Override
