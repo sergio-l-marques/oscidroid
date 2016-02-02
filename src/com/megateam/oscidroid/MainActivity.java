@@ -58,6 +58,24 @@ public class MainActivity extends Activity {
 		is.putExtras(getIntent());
 		startService(is);*/
 		
+
+		/*L.i( "Start service");
+        Intent intent = new Intent(this, DataServ.class);
+        intent.fillIn(getIntent(), 0); // TODO: Find better way to get extras for `UsbManager.getAccessory()` use?
+        startService(intent);
+
+		
+                               
+        Intent i = new Intent("com.megateam.oscidroid.ACTION_BIND");
+        bindService(i, mConnection, Context.BIND_AUTO_CREATE);
+		 */
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		L.i( "MainActivity: onStart"); //L Message
+		
 		L.i( "Start service");
         Intent intent = new Intent(this, DataServ.class);
         intent.fillIn(getIntent(), 0); // TODO: Find better way to get extras for `UsbManager.getAccessory()` use?
@@ -67,13 +85,9 @@ public class MainActivity extends Activity {
                                
         Intent i = new Intent("com.megateam.oscidroid.ACTION_BIND");
         bindService(i, mConnection, Context.BIND_AUTO_CREATE);
-		 
-	}
-
-	@Override
-	protected void onStart() {
-		super.onStart();
-		L.i( "MainActivity: onStart"); //L Message
+	
+		
+		
 	}
 
 	
@@ -193,12 +207,12 @@ public class MainActivity extends Activity {
     				case MotionEvent.ACTION_MOVE:
     					L.i( String.format(String.format("ACTION_MOVE %f", viewX))); //L Message
     					displayView.setDisplayXOffset(viewX);
-    		            Message msg = Message.obtain(null, DataServ.MSG_DRAW_DISPLAY, 0, 0);
+    		            /*Message msg = Message.obtain(null, DataServ.MSG_DRAW_DISPLAY, 0, 0);
     		            try {
     		                mServiceMessenger.send(msg);
     		            } catch (RemoteException e) {
     		                e.printStackTrace();
-    		            }
+    		            }*/
     					break;
     				case MotionEvent.ACTION_UP:
     					L.i( String.format(String.format("ACTION_UP"))); //L Message

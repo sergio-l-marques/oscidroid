@@ -194,14 +194,14 @@ public class channelTab {
 				setAttenuation(chIdx, -1); 
 				break;
 			case 2: 
-				setOffset(chIdx, +10);
+				setOffset(chIdx, +1);
 			    if (mOngoing) {
 			        mOngoing = false;
 			    } 
 
 				break;
 			case 3: 
-				setOffset(chIdx, -10); 
+				setOffset(chIdx, -1); 
 			    if (mOngoing) {
 			        mOngoing = false;
 			    }

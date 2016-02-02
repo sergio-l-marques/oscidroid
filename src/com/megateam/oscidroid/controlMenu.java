@@ -221,7 +221,7 @@ public class controlMenu extends FragmentActivity {
 				if(fromUser){
 					L.i(String.format("ctrlMenu Client : onProgressChanged progress-->%d", progress));
 					setWindowPreviewSize(progress+1);
-					drawDisplay();
+					//drawDisplay();
 				}
 			}
 		});
@@ -323,7 +323,7 @@ public class controlMenu extends FragmentActivity {
 				if ( (enableChannelsMask&(1<<i)) != 0) {
 					selected=true;
 					//reAddSource() ---> apenas adicionamos se não estiver ja' adicionado!!!!!!
-					addSource(i);
+					///////addSource(i);
 				} else {
 					selected=false;
 				}
@@ -439,7 +439,7 @@ public class controlMenu extends FragmentActivity {
             e.printStackTrace();
         }
     }
-    public void drawDisplay() {
+    /*public void drawDisplay() {
     	
         Message msg = Message.obtain(null, DataServ.MSG_DRAW_DISPLAY, 0, 0);
         try {
@@ -447,5 +447,5 @@ public class controlMenu extends FragmentActivity {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 }

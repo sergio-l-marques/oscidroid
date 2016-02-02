@@ -16,7 +16,7 @@ public class DataThread extends Thread {
 	//private static final int MAX_NUM_CHANNELS = 4;
 	
 	//private SurfaceHolder surfaceHolder=null;
-	private boolean exitFlag=false, stopFlag=false, drawDisplayFlag=false;
+	private boolean exitFlag=false;//, drawDisplayFlag=false;
 	private DisplayView dpv=null;
 	private sourceIface dataIface=null; //new sourceIface[MAX_NUM_CHANNELS];
 	//private boolean [] channelEnable=new boolean[MAX_NUM_CHANNELS];  
@@ -43,7 +43,7 @@ public class DataThread extends Thread {
 		L.i( String.format("DataThread: enableChannel %d",  chNum)); //L Message
 		
 		//TODO enviar esta informação de forma automática para a classe dpv
-		dpv.newChannel(chNum);
+		//dpv.newChannel(chNum);
 		dataIface.enableChannel(chNum);
 		return 0;
 	}
@@ -53,7 +53,7 @@ public class DataThread extends Thread {
 		L.i( String.format("DataThread: disableChannel %d",  chNum)); //L Message
 		
 		//TODO enviar esta informação de forma automática para a classe dpv
-		dpv.delChannel(chNum);
+		//dpv.delChannel(chNum);
 		dataIface.disableChannel(chNum);
 
 		return 0;
@@ -67,38 +67,43 @@ public class DataThread extends Thread {
 	void setOffset(int channel, int offset) {
 		
 		dataIface.setOffset(channel, offset);
-		dpv.setChannelYoffset(channel, (byte) offset);
+		//dpv.setChannelYoffset(channel, (byte) offset);
 	}
 
 	public int getEnabledChannelsMask() {
-		int mask=0x0f;
-		
-/*		for (int i=0;i<MAX_NUM_CHANNELS;i++) {
-			if (channelEnable[i]==true) mask|=(1<<i);
-		}*/
-		
-		return mask;
+
+		return dataIface.getEnabledChannelsMask();
 	}
 	
-	void setWindowPreviewSize(int size) {
-		dpv.setWindowPreviewSize(size);
+	int setWindowPreviewSize(int size) {
+		
+		return dataIface.setOsciWindowSize(size);
 	}
 	
 	int getWindowPreviewSize() {
-		return dpv.getWindowPreviewSize();
+		//return dpv.getWindowPreviewSize();
+		return dataIface.getOsciWindowSize();
 	}
 	
+	static boolean stopStart=true;
 	public void startStop() {
-		if (this.stopFlag==true) this.stopFlag=false;
-		else this.stopFlag=true;
+		L.i( String.format("DataThread: stopstart %s",  (stopStart)?"true":"false")); //L Message
+		
+		if (stopStart) {
+			dataIface.setOsciMode((byte) 0x01);
+			stopStart=false;
+		} else {
+			dataIface.setOsciMode((byte) 0x00);
+			stopStart=true;
+		}
 	}
 
-	public void drawDisplay() {
+	/*public void drawDisplay() {
 		if (this.stopFlag==true) {
 			this.stopFlag=false;
 			this.drawDisplayFlag=true;
 		}
-	}
+	}*/
 
 	public void stopThread() {
 		exitFlag = true;
@@ -116,7 +121,7 @@ public class DataThread extends Thread {
 		Canvas c = null;
 		while (exitFlag==false)	{
 			//if (exitFlag==true) {
-			if ((stopFlag==false)&&(dpv!=null)) {
+			if (dpv!=null && dataIface!=null) {
 				
 				c = null;
 				try	{
@@ -124,13 +129,13 @@ public class DataThread extends Thread {
 					synchronized (dpv.getHolder()) {
 						if ((c != null) && dataIface!=null) {
 							
-							dataIface.fetchData();
-
-							for (int i=0; i<dataIface.getNumChannels();i++){
-								dpv.setPoints(i, dataIface.getSamples(i));
+							if (dataIface.fetchData(dpv) ==0 ) {
+								for (int i=0; i<dataIface.getNumChannels();i++){
+									dpv.setPoints(i, dataIface.getSamples(i));
+								}
+								
+								dpv.onDraw(c);
 							}
-							
-							dpv.onDraw(c);
 						}
 					}
 					sleep(SLEEP_TIME);
@@ -142,10 +147,6 @@ public class DataThread extends Thread {
 					if (c != null){
 						dpv.getHolder().unlockCanvasAndPost(c);
 					}
-				}
-				if (drawDisplayFlag==true) {
-					stopFlag=true;
-					drawDisplayFlag=false;
 				}
 			} else {
 				//L.i( String.format("DataThread: stopFlag %s dpvPtr %s",stopFlag?"true":"false", (osciAppContext.displayView==null)?"null":"notNull")); //L Message

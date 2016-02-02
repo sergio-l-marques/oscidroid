@@ -1,11 +1,7 @@
 package com.megateam.oscidroid;
 
 public class netData implements sourceIface{
-	private int numPointsPerChannel;
-
 	public netData(int numPointsPerChannel) {
-		
-		this.numPointsPerChannel=numPointsPerChannel;
 	}
 	
 	@Override
@@ -27,21 +23,15 @@ public class netData implements sourceIface{
 	}
 
 	@Override
-	public void setAttenuation(int channel, int attenuation) {
+	public int setAttenuation(int channel, int attenuation) {
 		// TODO Auto-generated method stub
-		
+		return -1;
 	}
 
 	@Override
-	public void setOffset(int channel, int offset) {
+	public int setOffset(int channel, int offset) {
 		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void fetchData() {
-		// TODO Auto-generated method stub
-		
+		return -1;
 	}
 
 	@Override
@@ -58,6 +48,36 @@ public class netData implements sourceIface{
 
 	@Override
 	public int disableChannel(int chNum) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int fetchData(DisplayView dpv) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getEnabledChannelsMask() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int setOsciMode(byte mode) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int setOsciWindowSize(int size) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getOsciWindowSize() {
 		// TODO Auto-generated method stub
 		return 0;
 	}

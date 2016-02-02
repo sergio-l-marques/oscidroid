@@ -59,7 +59,7 @@ public class DataServ extends Service {
   static final int MSG_NUM_CHANNELS = 7;
   static final int MSG_SET_ATTENUATION = 8;
   static final int MSG_SET_OFFSET = 9;
-  static final int MSG_DRAW_DISPLAY = 10;
+  //static final int MSG_DRAW_DISPLAY = 10;
   static final int MSG_SET_WINDOW_PREVIEW_SIZE = 11;
   
   
@@ -120,10 +120,10 @@ public class DataServ extends Service {
                    /*if (osciAppContext.dataThread!=null)
                   	 osciAppContext.dataThread.startStop();*/
               	break;
-              case MSG_DRAW_DISPLAY:
+              /*case MSG_DRAW_DISPLAY:
                   L.i( String.format("Service MSG_DRAW_DISPLAY dataThread %s", (dataThread==null)?"null":"ok"));
               	drawDisplayDataThread();                	
-              	break;
+              	break;*/
               //case MSG_SOURCE_GEN: 
               //	osciAppContext.dataThread=new DataThread(new genData(osciAppContext.numPointsPerChan), osciAppContext); 
               //	break;
@@ -135,6 +135,7 @@ public class DataServ extends Service {
               //	break;
               case MSG_STOP_SERVICE:
               	L.i( "Service stopSelf");
+              	uData.close();
               	stopSelf();
               	break;
               case MSG_ADD_SOURCE:
@@ -204,7 +205,8 @@ public class DataServ extends Service {
 	@Override
 	public void onStart(Intent intent, int startId) {
 
-		uData=new usbData(getApplicationContext(), intent, MainActivity.numPointsPerChan);
+		//uData=new usbData(getApplicationContext(), intent, MainActivity.numPointsPerChan);
+		uData= new usbData(getApplicationContext(), intent, MainActivity.numPointsPerChan);
 		//gData=new genData(MainActivity.numPointsPerChan);
 		
 		dataThread.setOsciDevType(uData);
@@ -237,9 +239,6 @@ public class DataServ extends Service {
 	}
 	void stopStartDataThread() {
 		dataThread.startStop();
-	}
-	void drawDisplayDataThread() {
-		dataThread.drawDisplay();
 	}
 	int getEnabledChannelsMaskDataThread() {
 		return dataThread.getEnabledChannelsMask();
